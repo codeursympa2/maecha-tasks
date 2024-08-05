@@ -1,0 +1,4 @@
+enum TypeFormEnum{
+  login,
+  register
+}
