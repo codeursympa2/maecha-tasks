@@ -40,7 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final user = await loginUser.call(event.userModel);
 
         if (user != null && user.emailVerified) {
-          emit(const AuthSuccessState(message: loginSuccessfully));
+          emit(const AuthLoginSuccessState(message: loginSuccessfully));
           //on sauvegarde l'email s'il l'user check sinon on le supprime
           event.isChecked ?
           sharedPreferencesService.setUserEmailLocal(user: UserModel(email: user.email!))
@@ -70,7 +70,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthLoadingState());
       try{
         await registerUser.call(event.userModel);
-        emit(const AuthSuccessState(message: accountCreated));
+        emit(const AuthRegisterSuccessState(message: accountCreated));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           emit(const AuthFailureState(message: "The password provided is too weak."));

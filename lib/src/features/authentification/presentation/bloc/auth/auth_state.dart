@@ -15,9 +15,17 @@ final class AuthLoadingState extends AuthState {
   const AuthLoadingState();
 }
 
-class AuthSuccessState extends AuthState {
+class AuthLoginSuccessState extends AuthState {
   final String message;
-  const AuthSuccessState({required this.message});
+  const AuthLoginSuccessState({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class AuthRegisterSuccessState extends AuthState {
+  final String message;
+  const AuthRegisterSuccessState({required this.message});
 
   @override
   List<Object> get props => [message];

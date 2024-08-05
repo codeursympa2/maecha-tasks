@@ -39,7 +39,7 @@ class RegisterPage extends StatelessWidget {
               if(state is AuthLoadingState){
                 showCustomMessage(message: waiting);
               }
-              if(state is AuthSuccessState){
+              if(state is AuthRegisterSuccessState){
                 //Affichage du message
                 showCustomSuccess(message: state.message);
                 //Redirection
@@ -104,7 +104,7 @@ class _FormRegisterState extends State<_FormRegister> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if( state is AuthSuccessState){
+        if( state is AuthRegisterSuccessState){
           //reinialisation des champs
           resetFields([_firstNameController,_lastNameController,_emailController,_passwordController,_passwordConfController]);
           setState(() {

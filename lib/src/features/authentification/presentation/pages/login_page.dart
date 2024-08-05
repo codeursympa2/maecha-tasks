@@ -38,7 +38,7 @@ class LoginPage extends StatelessWidget {
       if(state is AuthLoadingState){
         showCustomMessage(message: waiting);
       }
-      if(state is AuthSuccessState){
+      if(state is AuthLoginSuccessState){
         //Affichage du message
         showCustomSuccess(message: state.message);
         //Redirection
@@ -114,7 +114,7 @@ class _FormLoginState extends State<_FormLogin> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
     listener: (context, state) {
-      if(state is AuthSuccessState){
+      if(state is AuthLoginSuccessState){
         //reinialisation des champs
         resetFields([_emailController,_passwordController]);
         setState(() {
