@@ -8,7 +8,7 @@ import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
 import 'package:maecha_tasks/src/constants/strings/strings.dart';
 import 'package:maecha_tasks/src/features/authentification/domain/entities/auth_form_fields_model.dart';
 import 'package:maecha_tasks/src/features/authentification/domain/entities/user_model/user_model.dart';
-import 'package:maecha_tasks/src/features/authentification/domain/enum/type_form_enum.dart';
+import 'package:maecha_tasks/src/features/authentification/domain/value_objects/type_form_enum.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/bloc/auth/auth_bloc.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/bloc/bottom_sheet/bottom_sheet_bloc.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/bloc/form/auth_form_bloc.dart';

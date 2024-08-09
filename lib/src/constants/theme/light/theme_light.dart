@@ -59,6 +59,13 @@ const TextTheme textTheme=TextTheme(
       fontWeight: FontWeight.bold,
       color: primaryLight
   ),
+  //title Page
+  displayLarge:  TextStyle(
+      fontFamily: quicksand,
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+      color: primaryTextLight
+  ),
 );
 
 

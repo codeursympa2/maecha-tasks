@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
 import 'package:maecha_tasks/src/features/authentification/domain/entities/auth_form_fields_model.dart';
-import 'package:maecha_tasks/src/features/authentification/domain/enum/type_form_enum.dart';
+import 'package:maecha_tasks/src/features/authentification/domain/value_objects/type_form_enum.dart';
 part 'auth_form_event.dart';
 part 'auth_form_state.dart';
 

@@ -32,7 +32,6 @@ TextFormField texEditingField(
       validator: validator,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted);
-
 }
 
 

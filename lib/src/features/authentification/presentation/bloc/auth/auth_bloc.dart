@@ -7,6 +7,7 @@ import 'package:maecha_tasks/src/constants/strings/query_responses_strings.dart'
 import 'package:maecha_tasks/src/features/authentification/application/usecases/login_user.dart';
 import 'package:maecha_tasks/src/features/authentification/application/usecases/register_user.dart';
 import 'package:maecha_tasks/src/features/authentification/application/usecases/send_verification_email.dart';
+import 'package:maecha_tasks/src/features/authentification/data/sources/network/firestore_auth_datasource.dart';
 import 'package:maecha_tasks/src/features/authentification/domain/entities/user_model/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser;
   final SendVerificationEmail sendVerificationEmail;
   final SharedPreferencesService sharedPreferencesService;
+  final FirestoreAuthDatasource firestoreAuthDatasource;
 
 
   AuthBloc({
@@ -26,6 +28,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.registerUser,
     required this.sendVerificationEmail,
     required this.sharedPreferencesService,
+    required this.firestoreAuthDatasource
   }) : super(const AuthInitialState()) {
     on<LoginUserEvent>((event, emit) async{
       emit(const AuthLoadingState());
@@ -47,12 +50,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               :
           sharedPreferencesService.clearData(sharedPreferencesService.emailKey);
 
+          //current user info
+          UserModel currentUser=await firestoreAuthDatasource.getCurrentUser(user.uid);
           //On sauvegarde les informations de l'utilisateur
           sharedPreferencesService.setUser(user: UserModel(
-              email: user.email!,
+              email: currentUser.email,
               uid: user.uid,
-              lastName: event.userModel.lastName,
-              firstName: event.userModel.firstName
+              lastName: currentUser.lastName,
+              firstName: currentUser.firstName
           ));
         } else {
           emit(const AuthFailureState(message: emailNotVerified));

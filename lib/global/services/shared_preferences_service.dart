@@ -13,7 +13,7 @@ class SharedPreferencesService{
   const SharedPreferencesService({required this.local});
 
   Future<void> setUserEmailLocal({required UserModel user})async{
-    await local.setString(emailKey, user.email);
+    await local.setString(emailKey, user.email!);
   }
 
   String? getUserEmailLocal(){

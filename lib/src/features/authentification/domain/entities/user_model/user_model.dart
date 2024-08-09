@@ -8,7 +8,7 @@ class UserModel extends Equatable{
   final String? uid;
   final String? firstName;
   final String? lastName;
-  final String email;
+  final String? email;
   final String? password;
 
   const UserModel({
@@ -18,6 +18,15 @@ class UserModel extends Equatable{
     required this.email,
     this.password
   });
+
+  const UserModel.toLocal({
+    required this.uid,
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.password
+  });
+
 
 
   const UserModel.userToCloudFirestore(this.uid, this.firstName, this.lastName,this.email,{this.password = ""});

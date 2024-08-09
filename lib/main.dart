@@ -8,12 +8,20 @@ import 'package:maecha_tasks/src/constants/theme/light/theme_light.dart';
 import 'package:maecha_tasks/src/features/authentification/application/usecases/login_user.dart';
 import 'package:maecha_tasks/src/features/authentification/application/usecases/register_user.dart';
 import 'package:maecha_tasks/src/features/authentification/application/usecases/send_verification_email.dart';
+import 'package:maecha_tasks/src/features/authentification/data/sources/network/firestore_auth_datasource.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/bloc/auth/auth_bloc.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/bloc/bottom_sheet/bottom_sheet_bloc.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/bloc/form/auth_form_bloc.dart';
-import 'package:maecha_tasks/src/features/authentification/presentation/pages/main_page.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:maecha_tasks/src/features/authentification/presentation/pages/splash_screen_page.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/local/add_task_local.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/local/check_task_title_local.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/remote/add_task.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/remote/check_task_title.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/remote/delete_task.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/remote/get_tasks.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/remote/update_tasks.dart';
+import 'package:maecha_tasks/src/features/task/presentation/bloc/bottom_nav_bloc/bottom_nav_bar_bloc.dart';
+import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,12 +44,26 @@ class MyApp extends StatelessWidget {
           registerUser: getIt<RegisterUser>(),
           sendVerificationEmail: getIt<SendVerificationEmail>(),
           sharedPreferencesService: getIt<SharedPreferencesService>(),
+          firestoreAuthDatasource: getIt<FirestoreAuthDatasource>()
         )),
         //Bottom sheet nav
         BlocProvider<BottomSheetBloc>(create: (context)=> BottomSheetBloc()),
 
         //Auth form
-        BlocProvider<AuthFormBloc>(create: (context) => AuthFormBloc())
+        BlocProvider<AuthFormBloc>(create: (context) => AuthFormBloc()),
+        //Bottom nav bloc
+        BlocProvider<BottomNavBarBloc>(create: (context) => BottomNavBarBloc()),
+        //Task
+        BlocProvider<TaskBloc>(create: (context)=> TaskBloc(
+            getIt<AddTask>(),
+            getIt<AddTaskLocal>(),
+            getIt<DeleteTask>(),
+            getIt<GetTasks>(),
+            getIt<UpdateTasks>(),
+            getIt<CheckTaskTitle>(),
+            getIt<CheckTaskTitleLocal>(),
+            getIt<SharedPreferencesService>(),
+        ))
       ],
       child: Builder(
         builder: (context) {

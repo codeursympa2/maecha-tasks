@@ -21,4 +21,8 @@ const String read="J’ai lu et j’accepte les ";
 const String usingConditions="conditions d’utilisations ";
 const String suite="de cette application.";
 
+const lowValue="Basse";
+const highValue="Elevée";
+const mediumValue="Moyenne";
+
 

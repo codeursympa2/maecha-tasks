@@ -20,3 +20,9 @@ const String regexSpecialCharString="Le mot de passe doit contenir au moins un c
 const String regexMinLengthString="Le mot de passe doit avoir une longueur minimale de 8 caractères";
 const String waiting="Veillez patienter...";
 
+//Task
+const String  createTask="Création d’une tâche";
+const String descCreateTask="Bienvenue sur la page de création de tâche ! Ajoutez facilement et rapidement vos nouvelles tâches, définissez leurs priorités, et restez organisé pour atteindre vos objectifs avec efficacité.";
+const String failureAddTask="Echec de l'ajout de la tâche";
+const String titleExist="Ce titre existe dejà.";
+const String taskAdded="Tâche ajoutée";
