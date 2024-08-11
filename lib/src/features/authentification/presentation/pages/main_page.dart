@@ -6,6 +6,7 @@ import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/constants/strings/strings.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/bloc/bottom_sheet/bottom_sheet_bloc.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/widgets/common_widgets_auth.dart';
+import 'package:maecha_tasks/src/utils/check_connectivity_listener_widget.dart';
 
 
 class MainPage extends StatelessWidget {
@@ -14,7 +15,7 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
+    return checkConnectivityListenerWidget(child: Scaffold(
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -28,11 +29,11 @@ class MainPage extends StatelessWidget {
                 RichText(
                     textAlign: TextAlign.justify ,
                     text: TextSpan(
-                      children: [
-                        TextSpan(text: mainDesc,style: Theme.of(context).textTheme.labelMedium),
-                        TextSpan(text: registerFree,style: Theme.of(context).textTheme.bodyMedium),
-                        TextSpan(text: mainDescSuite,style: Theme.of(context).textTheme.labelMedium),
-                      ]
+                        children: [
+                          TextSpan(text: mainDesc,style: Theme.of(context).textTheme.labelMedium),
+                          TextSpan(text: registerFree,style: Theme.of(context).textTheme.bodyMedium),
+                          TextSpan(text: mainDescSuite,style: Theme.of(context).textTheme.labelMedium),
+                        ]
                     )
                 ),
                 const Gap(40),
@@ -50,6 +51,6 @@ class MainPage extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }

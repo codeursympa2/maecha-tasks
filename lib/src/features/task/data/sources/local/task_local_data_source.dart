@@ -2,7 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
 import 'package:sqflite/sqflite.dart';
 
-@lazySingleton
+@injectable
 class TaskLocalDataSource{
   Database? _db;
 

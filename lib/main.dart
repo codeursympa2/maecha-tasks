@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/global/injectable/injectable.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/routes/app_router.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider<ConnectivityCheckerBloc>(create: (context) => ConnectivityCheckerBloc()),
         //Authentification
         BlocProvider<AuthBloc>(create: (context)=> AuthBloc(
           loginUser: getIt<LoginUser>(),

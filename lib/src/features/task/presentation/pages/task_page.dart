@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
+import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
@@ -18,12 +19,15 @@ import 'package:maecha_tasks/src/utils/easy_loading_messages.dart';
 class TaskPage extends StatelessWidget {
   const TaskPage({super.key});
 
+
   @override
   Widget build(BuildContext context) {
 
-
     return Scaffold(
-      body: BlocListener<TaskBloc, TaskState>(
+      body: MultiBlocListener(
+      listeners: [
+        
+      BlocListener<TaskBloc, TaskState>(
       listener: (context, state) {
         if(state is TaskLoadingState){
           showCustomMessage(message: waiting);
@@ -43,7 +47,9 @@ class TaskPage extends StatelessWidget {
           showCustomError(message: state.message);
         }
       },
-      child: SingleChildScrollView(
+),
+     ],
+  child: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(paddingPagesApp),
           child: Column(
@@ -57,7 +63,7 @@ class TaskPage extends StatelessWidget {
           ],),
         ),
       ),
-),
+      ),
     );
   }
 }
@@ -94,7 +100,11 @@ class _TaskFormState extends State<_TaskForm> {
   bool _notificationsEnabled = false;
   //
 
-
+  @override
+  void initState() {
+    super.initState();
+  }
+  
   void _onChangedNotifyValue(bool value) {
     setState(() {
       _notificationsEnabled = value;
@@ -102,13 +112,9 @@ class _TaskFormState extends State<_TaskForm> {
   }
   @override
   Widget build(BuildContext context) {
-    return BlocListener<TaskBloc, TaskState>(
-    listener: (context, state) {
-      if(state is TaskCreateSuccessState){
-
-      }
-    },
-  child: FormBuilder(
+    return BlocBuilder<ConnectivityCheckerBloc, ConnectivityCheckerState>(
+    builder: (context, state) {
+    return FormBuilder(
       key: _formKey,
       child: Column(
         children: [
@@ -136,14 +142,15 @@ class _TaskFormState extends State<_TaskForm> {
           ElevatedButton(
             onPressed: (){
               if((_formKey.currentState?.saveAndValidate() ?? false)){
-                _logicToCreate();
+                _logicToCreate(state);
               }
             },
-            child: Text('Ajouter une tâche'),
+            child: const Text('Ajouter'),
           ),
         ],
       ),
-    ),
+    );
+  },
 );
 
   }
@@ -258,7 +265,7 @@ class _TaskFormState extends State<_TaskForm> {
     return vl;
   }
 
-  _logicToCreate() {
+  _logicToCreate(ConnectivityCheckerState state) {
     final formValues=_formKey.currentState?.value;
 
     TaskModel task=TaskModel.addTask(
@@ -269,8 +276,14 @@ class _TaskFormState extends State<_TaskForm> {
         notify: _notificationsEnabled,
         done: false
     );
-    //BlocProvider.of<TaskBloc>(context).add(CreateTaskRemoteEvent(task: task));
-    BlocProvider.of<TaskBloc>(context).add(CreateTaskLocaleEvent(task: task));
+    //en cas de connection
+    if(state is ConnectionInternetState){
+      BlocProvider.of<TaskBloc>(context).add(CreateTaskRemoteEvent(task: task));
+    }
+    //Pas de connexion
+    if(state is NoConnectionInternetState){
+      BlocProvider.of<TaskBloc>(context).add(CreateTaskLocaleEvent(task: task));
+    }
   }
 
 

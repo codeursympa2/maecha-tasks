@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
+import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/bottom_nav_bloc/bottom_nav_bar_bloc.dart';
 import 'package:maecha_tasks/src/features/task/presentation/widgets/bottom_navigation_bar.dart';
+import 'package:maecha_tasks/src/utils/check_connectivity_listener_widget.dart';
 
 class IndexPage extends StatelessWidget {
   const IndexPage({super.key});
@@ -9,7 +12,7 @@ class IndexPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int selectedIndex = 0;
-    return BlocConsumer<BottomNavBarBloc, BottomNavBarState>(
+    return checkConnectivityListenerWidget(child: BlocConsumer<BottomNavBarBloc, BottomNavBarState>(
       listener: (context, state) {
         if (state is GetIndexPage) {
           selectedIndex = state.index;
@@ -19,7 +22,7 @@ class IndexPage extends StatelessWidget {
         return Scaffold(
           bottomNavigationBar: bottomNavigationBar(
               context, selectedIndex,
-              (index){
+                  (index) {
                 BlocProvider.of<BottomNavBarBloc>(context).add(
                     ChangePageEvent(index: index));
               }),
@@ -28,6 +31,6 @@ class IndexPage extends StatelessWidget {
           ),
         );
       },
-    );
+    ));
   }
 }

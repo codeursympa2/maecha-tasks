@@ -8,8 +8,8 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:cloud_firestore/cloud_firestore.dart' as _i8;
-import 'package:firebase_auth/firebase_auth.dart' as _i7;
+import 'package:cloud_firestore/cloud_firestore.dart' as _i9;
+import 'package:firebase_auth/firebase_auth.dart' as _i8;
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 import 'package:shared_preferences/shared_preferences.dart' as _i3;
@@ -29,7 +29,7 @@ import '../../src/features/authentification/data/sources/network/firestore_auth_
 import '../../src/features/authentification/domain/repositories/auth_repository.dart'
     as _i19;
 import '../../src/features/task/application/controllers/task_controller.dart'
-    as _i9;
+    as _i10;
 import '../../src/features/task/application/usecases/local/add_task_local.dart'
     as _i17;
 import '../../src/features/task/application/usecases/local/check_task_title_local.dart'
@@ -47,7 +47,7 @@ import '../../src/features/task/application/usecases/remote/update_tasks.dart'
 import '../../src/features/task/data/repositories/task_repository_impl.dart'
     as _i15;
 import '../../src/features/task/data/sources/local/task_local_data_source.dart'
-    as _i10;
+    as _i7;
 import '../../src/features/task/data/sources/network/task_remote_data_source.dart'
     as _i12;
 import '../../src/features/task/domain/repositories/task_repository.dart'
@@ -86,23 +86,22 @@ extension GetItInjectableX on _i1.GetIt {
       () => appModule.bottomSheetServ,
       preResolve: true,
     );
-    gh.lazySingleton<_i7.FirebaseAuth>(() => appModule.firebaseAuth);
-    gh.lazySingleton<_i8.FirebaseFirestore>(() => appModule.firebaseFirestore);
-    gh.lazySingleton<_i9.TaskController>(() => _i9.TaskController());
-    gh.lazySingleton<_i10.TaskLocalDataSource>(
-        () => _i10.TaskLocalDataSource());
+    gh.factory<_i7.TaskLocalDataSource>(() => _i7.TaskLocalDataSource());
+    gh.lazySingleton<_i8.FirebaseAuth>(() => appModule.firebaseAuth);
+    gh.lazySingleton<_i9.FirebaseFirestore>(() => appModule.firebaseFirestore);
+    gh.lazySingleton<_i10.TaskController>(() => _i10.TaskController());
     gh.lazySingleton<_i11.SharedPreferencesService>(() =>
         _i11.SharedPreferencesService(local: gh<_i3.SharedPreferences>()));
     gh.factory<_i12.TaskRemoteDataSource>(
-        () => _i12.TaskRemoteDataSource(db: gh<_i8.FirebaseFirestore>()));
+        () => _i12.TaskRemoteDataSource(db: gh<_i9.FirebaseFirestore>()));
     gh.factory<_i13.FirestoreAuthDatasource>(
-        () => _i13.FirestoreAuthDatasource(gh<_i8.FirebaseFirestore>()));
+        () => _i13.FirestoreAuthDatasource(gh<_i9.FirebaseFirestore>()));
     gh.lazySingleton<_i14.TaskRepository>(() => _i15.TaskRepositoryImpl(
           remoteDataSource: gh<_i12.TaskRemoteDataSource>(),
-          localDataSource: gh<_i10.TaskLocalDataSource>(),
+          localDataSource: gh<_i7.TaskLocalDataSource>(),
         ));
     gh.factory<_i16.FirebaseAuthDatasource>(() => _i16.FirebaseAuthDatasource(
-          gh<_i7.FirebaseAuth>(),
+          gh<_i8.FirebaseAuth>(),
           gh<_i13.FirestoreAuthDatasource>(),
         ));
     gh.lazySingleton<_i17.AddTaskLocal>(
