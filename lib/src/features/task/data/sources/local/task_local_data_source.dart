@@ -28,8 +28,7 @@ class TaskLocalDataSource{
       dateTime TEXT NOT NULL, -- Utilisez TEXT pour stocker la date et l'heure en format ISO
       priority TEXT NOT NULL,
       notify INTEGER NOT NULL,
-      done INTEGER NOT NULL,
-      user TEXT NOT NULL
+      done INTEGER NOT NULL
     )
         """
     );
@@ -79,6 +78,25 @@ class TaskLocalDataSource{
     } else {
       return false;
     }
+  }
+
+  Future<void> deleteTask(String title) async {
+    final local = await db;
+    await local.delete(_tableName,whereArgs: [title],where: "title=?");
+  }
+
+  Future<void> deleteAllTasks() async {
+    final local = await db;
+    await local.delete(_tableName);
+  }
+
+  Future<int> countTasks() async {
+    final local = await db;
+    final result = await local.rawQuery('SELECT COUNT(*) as count FROM $_tableName');
+
+    // Extraire le nombre total à partir du résultat de la requête
+    int totalCount = Sqflite.firstIntValue(result) ?? 0;
+    return totalCount;
   }
 
 }

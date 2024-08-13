@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:maecha_tasks/global/injectable/injectable.dart';
+import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/constants/strings/strings.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/bloc/bottom_sheet/bottom_sheet_bloc.dart';
@@ -51,6 +53,6 @@ class MainPage extends StatelessWidget {
           ),
         ),
       ),
-    ));
+    ), sharedPref: getIt<SharedPreferencesService>());
   }
 }

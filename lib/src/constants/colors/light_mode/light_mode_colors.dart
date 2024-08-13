@@ -10,3 +10,4 @@ const Color textFieldBackColorLight=Color(0xFFF1F1F1);
 const Color skeletonColorLight=Color(0xFFF2F2F2);
 const Color successColorLight=Color(0xFF008536);
 const Color warningColorLight=Color(0xFFFB9500);
+const Color infoColorLight=Color(0xFF021D56);

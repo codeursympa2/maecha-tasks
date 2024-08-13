@@ -69,8 +69,6 @@ class TaskModel extends Equatable{
     json['priority']=_getPriorityToJsonLocal(priority!);
     json['done']=_getValueToJsonLocal(done!);
     json['notify']=_getValueToJsonLocal(notify!);
-    json['user']=user!.uid; //on insere l'uid de l'utilisateur en local seulement
-
     return json;
   }
 
@@ -82,7 +80,7 @@ class TaskModel extends Equatable{
       priority: _getPriorityFromJsonLocal(json['priority']),
       notify: _getValueFromJsonLocal(json['notify'] as int),
       done:  _getValueFromJsonLocal(json['done'] as int),
-      user: UserModel.toLocal(uid: json['user'] as String?),
+      user: null,
     );
   }
 

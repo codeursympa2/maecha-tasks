@@ -46,4 +46,24 @@ class TaskRepositoryImpl implements TaskRepository{
   Future<bool> checkTaskTitleLocal(TaskModel task) async{
     return await localDataSource.getTaskByTitle(task.title!);
   }
+
+  @override
+  Future<void> deleteTaskLocal(TaskModel task) async {
+    await localDataSource.deleteTask(task.title!);
+  }
+
+  @override
+  Future<List<TaskModel>> getTasksLocal()async {
+    return await localDataSource.getAllTasks();
+  }
+
+  @override
+  Future<int> getTotalTasksLocal()async {
+    return await localDataSource.countTasks();
+  }
+
+  @override
+  Future<void> deleteAllTaskLocal()async {
+    localDataSource.deleteAllTasks();
+  }
 }
