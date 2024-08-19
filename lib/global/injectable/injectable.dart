@@ -8,6 +8,7 @@ import 'package:maecha_tasks/global/services/bottom_sheet_service.dart';
 import 'package:maecha_tasks/global/services/easy_loading/easy_loading_service.dart';
 import 'package:maecha_tasks/global/services/firebase_service.dart';
 import 'package:maecha_tasks/global/injectable/injectable.config.dart';
+import 'package:maecha_tasks/src/features/task/data/sources/local/database_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -35,6 +36,9 @@ abstract class AppModule {
 
   @preResolve
   Future<BottomSheetService> get bottomSheetServ => BottomSheetService.init();
+
+
+
   @lazySingleton
   FirebaseAuth get firebaseAuth => FirebaseAuth.instance;
 

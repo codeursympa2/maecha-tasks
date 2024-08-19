@@ -1,11 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:maecha_tasks/global/injectable/injectable.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
 import 'package:maecha_tasks/src/features/authentification/domain/entities/user_model/user_model.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/local/add_task_local.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/local/check_task_title_local.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/local/delete_all_tasks_local.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/local/get_tasks_local.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/local/get_total_tasks_local.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/add_task.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/check_task_title.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/delete_task.dart';
@@ -17,16 +19,33 @@ part 'task_event.dart';
 part 'task_state.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
+  //remote
   final AddTask addTask;
-  final AddTaskLocal addTaskLocal;
   final DeleteTask deleteTask;
   final GetTasks getTasks;
   final UpdateTasks updateTask;
   final CheckTaskTitle checkTaskTitle;
+  //local
   final CheckTaskTitleLocal checkTaskTitleLocal;
+  final AddTaskLocal addTaskLocal;
+  final GetTasksLocal getTasksLocal;
+  final GetTotalTasksLocal getTotalTasksLocal;
+  final DeleteAllTasksLocal deleteAllTasksLocal;
+  //
   final SharedPreferencesService local;
-
-  TaskBloc(this.addTask,this.addTaskLocal, this.deleteTask, this.getTasks, this.updateTask,this.checkTaskTitle,this.checkTaskTitleLocal,this.local) : super(const TaskInitialState()) {
+  TaskBloc(
+      {
+      required this.addTask,
+      required this.addTaskLocal,
+      required this.deleteTask,
+      required this.getTasks,
+      required this.updateTask,
+      required this.checkTaskTitle,
+      required this.checkTaskTitleLocal,
+      required this.getTotalTasksLocal,
+      required this.getTasksLocal,
+      required this.deleteAllTasksLocal,
+      required this.local}) : super(const TaskInitialState()) {
     on<TaskInitialEvent>((event, emit) {
       emit(const TaskInitialState());
     });
@@ -35,10 +54,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<CreateTaskRemoteEvent>((event,emit)async{
       emit(const TaskLoadingState());
       try{
-        //recupération de currentUser
-        UserModel user=local.getUser()!;
-        if(!(await checkTaskTitle.call(TaskModel.getTitle(title: event.task.title, user: user,)))){
-          await addTask.call(event.task.copyWith(user: user)).whenComplete(()=> emit(const TaskCreateSuccessState(message: taskAdded)));
+        if(await _checkTitleRemote(event.task)){
+          await _createTaskRemote(event.task).whenComplete(()=> emit(const TaskCreateSuccessState(message: taskAdded)));
         }else{
           emit(const TitleExistState(message: titleExist));
         }
@@ -66,5 +83,50 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     });
 
 
+    //Syncronisation des données
+    on<SyncDataToCloudFirestore>((event,emit)async{
+      int totalTaskListLocal=await getTotalTasksLocal.call();
+      //Si nous avons au moins 1 enregistrement en local
+      if(totalTaskListLocal >= 1){
+        emit(const SyncData()); //on notifie à l'utilisateur que la syncronisation est en cours
+        //Récupération des tâches en local
+        List<TaskModel> localData=await getTasksLocal.call();
+
+       try{
+         //Tableau des tâches dupliqués
+         int doub=0;
+         //On parcours la liste et ajoute 1 à 1 à cloudFirestore
+         for(var task in localData){
+           //Si nous n'avons t pa
+           if(await _checkTitleRemote(task)){
+             await _createTaskRemote(task.copyWith(user:local.getUser()));
+           }else{
+             doub++;
+           }
+         }
+         //On vide maitenant la partie local
+         await deleteAllTasksLocal.call();
+
+         //Notification de doublons
+         String message=doub > 1 ? "Plusieurs doublons supprimés" : "Un doublon supprimé";
+         doub >= 1 ? await Future.delayed(const Duration(seconds: 2),()=> emit(DoublonState(message))) : null;
+
+         emit(const SyncDataCompleted());
+       }catch(e){
+         print(e);
+         emit(const SyncDataFailure());
+       }
+      }
+    });
+  }
+
+  Future<void> _createTaskRemote(TaskModel task)async{
+    //recupération de currentUser
+    UserModel user=local.getUser()!;
+      await addTask.call(task.copyWith(user: user));
+  }
+
+  Future<bool> _checkTitleRemote(TaskModel task)async{
+    return !(await checkTaskTitle.call(TaskModel.getTitle(title: task.title, user: local.getUser(),)));
   }
 }

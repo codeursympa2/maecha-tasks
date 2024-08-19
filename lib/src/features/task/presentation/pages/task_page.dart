@@ -8,6 +8,7 @@ import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.d
 import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
 import 'package:maecha_tasks/src/constants/strings/strings.dart';
+import 'package:maecha_tasks/src/constants/theme/light/theme_light.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
 import 'package:maecha_tasks/src/features/task/domain/value_objects/task_priority.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/bottom_nav_bloc/bottom_nav_bar_bloc.dart';
@@ -95,6 +96,7 @@ class _TaskFormState extends State<_TaskForm> {
   final FocusNode _descFocusNode=FocusNode();
   final FocusNode _hourFocusNode=FocusNode();
   final FocusNode _dateFocusNode=FocusNode();
+  final FocusNode _choiceFocusNode=FocusNode();
 
   //
   bool _notificationsEnabled = false;
@@ -102,9 +104,9 @@ class _TaskFormState extends State<_TaskForm> {
 
   @override
   void initState() {
-    super.initState();
+     super.initState();
   }
-  
+
   void _onChangedNotifyValue(bool value) {
     setState(() {
       _notificationsEnabled = value;
@@ -112,46 +114,46 @@ class _TaskFormState extends State<_TaskForm> {
   }
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ConnectivityCheckerBloc, ConnectivityCheckerState>(
-    builder: (context, state) {
     return FormBuilder(
-      key: _formKey,
-      child: Column(
-        children: [
-          _buildTitleField(),
-          const Gap(16),
-          Row(children: [
-            Expanded(child: _buildDateField()),
-            const Gap(4),
-            Expanded(child: _buildHourField()),
-          ],),
-          const Gap(16),
-          _buildDescField(),
-          const Gap(16),
-          _buildColorChoice(),
-          const Gap(16),
-          SwitchListTile(
-            tileColor: backgroundLight,
-            activeColor: primaryLight,
-            contentPadding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-            title: Text("Activer les notifications pour cette tâche",style: Theme.of(context).textTheme.labelSmall,),
-            value: _notificationsEnabled,
-            onChanged:_onChangedNotifyValue,
-          ),
-          const Gap(16),
-          ElevatedButton(
-            onPressed: (){
-              if((_formKey.currentState?.saveAndValidate() ?? false)){
-                _logicToCreate(state);
-              }
-            },
-            child: const Text('Ajouter'),
-          ),
-        ],
-      ),
-    );
+        key: _formKey,
+        child: Column(
+          children: [
+            _buildTitleField(),
+            const Gap(16),
+            Row(children: [
+              Expanded(child: _buildDateField()),
+              const Gap(4),
+              Expanded(child: _buildHourField()),
+            ],),
+            const Gap(16),
+            _buildDescField(),
+            const Gap(16),
+            _buildColorChoice(),
+            const Gap(16),
+            SwitchListTile(
+              tileColor: backgroundLight,
+              activeColor: primaryLight,
+              contentPadding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+              title: Text("Activer les notifications pour cette tâche",style: Theme.of(context).textTheme.labelSmall,),
+              value: _notificationsEnabled,
+              onChanged:_onChangedNotifyValue,
+            ),
+            const Gap(16),
+            BlocBuilder<ConnectivityCheckerBloc, ConnectivityCheckerState>(
+              builder: (context, state) {
+                return ElevatedButton(
+              onPressed: (){
+                if((_formKey.currentState?.saveAndValidate() ?? false)){
+                  _logicToCreate(state);
+                }
+              },
+              child: const Text('Créer'),
+            );
   },
-);
+),
+          ],
+        ),
+      );
 
   }
 
@@ -217,32 +219,40 @@ class _TaskFormState extends State<_TaskForm> {
     );
   }
   Widget _buildColorChoice(){
+    const double iconSize=13;
     return  FormBuilderChoiceChip<String>(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       backgroundColor: backgroundLight,
-      labelStyle: Theme.of(context).textTheme.bodyMedium,
+      labelStyle: hintStyle,
       spacing: 3,
+      focusNode: _choiceFocusNode,
       decoration: const InputDecoration(
-          labelText:
-          'Priorités'),
+        iconColor: backgroundLight,
+          labelText:'Priorité',
+      ),
       name: 'priority',
+      validator: FormBuilderValidators.compose([
+        requiredFieldForm()
+      ]),
       initialValue: lowValue,
-      options:   const [
+      options: const [
         FormBuilderChipOption(
           value: lowValue,
-          avatar: const CircleAvatar(
-              backgroundColor: Colors.orange,
-              foregroundColor: backgroundLight,
-              child:  Text('B'),
+          avatar: CircleAvatar(
+            backgroundColor: lowPriorityColor,
           ),
         ),
         FormBuilderChipOption(
           value: mediumValue,
-          avatar: CircleAvatar(child: Text('M')),
+          avatar: CircleAvatar(
+            backgroundColor: mediumPriorityColor,
+          ),
         ),
         FormBuilderChipOption(
           value: highValue,
-          avatar: CircleAvatar(child: Text('E')),
+          avatar: CircleAvatar(
+            backgroundColor: highPriorityColor,
+          ),
         ),
       ],
       onChanged: _onChanged,
@@ -285,6 +295,22 @@ class _TaskFormState extends State<_TaskForm> {
       BlocProvider.of<TaskBloc>(context).add(CreateTaskLocaleEvent(task: task));
     }
   }
+
+  @override
+  void dispose() {
+    // Ne pas oublier de nettoyer les contrôleurs et focus nodes pour éviter les fuites de mémoire
+    _titleController.dispose();
+    _descController.dispose();
+    _hourController.dispose();
+    _dateController.dispose();
+    _titleFocusNode.dispose();
+    _descFocusNode.dispose();
+    _hourFocusNode.dispose();
+    _dateFocusNode.dispose();
+    _choiceFocusNode.dispose();
+    super.dispose();
+  }
+
 
 
 }

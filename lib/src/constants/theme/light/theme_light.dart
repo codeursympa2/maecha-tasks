@@ -66,6 +66,11 @@ const TextTheme textTheme=TextTheme(
       fontWeight: FontWeight.bold,
       color: primaryTextLight
   ),
+  displayMedium: TextStyle(
+      fontFamily: quicksand,
+      color: primaryTextLight,
+      fontSize: labelMediumSize
+  )
 );
 
 

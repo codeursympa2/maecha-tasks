@@ -42,3 +42,22 @@ class TitleExistState extends TaskState{
   List<Object?> get props => [message];
 }
 
+final class SyncData extends TaskState{
+  const SyncData();
+}
+
+class SyncDataCompleted extends TaskState{
+  const SyncDataCompleted();
+}
+
+final class SyncDataFailure extends TaskState{
+  const SyncDataFailure();
+}
+
+
+class DoublonState extends TaskState{
+  final String message;
+  const DoublonState(this.message);
+}
+
+

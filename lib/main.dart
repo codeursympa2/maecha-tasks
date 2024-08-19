@@ -16,17 +16,22 @@ import 'package:maecha_tasks/src/features/authentification/presentation/bloc/for
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/local/add_task_local.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/local/check_task_title_local.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/local/delete_all_tasks_local.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/local/get_tasks_local.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/local/get_total_tasks_local.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/add_task.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/check_task_title.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/delete_task.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/get_tasks.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/update_tasks.dart';
+import 'package:maecha_tasks/src/features/task/data/sources/local/database_manager.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/bottom_nav_bloc/bottom_nav_bar_bloc.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
+  await getIt<DatabaseManager>().initializeDatabase();  // Initialiser la base de données ici
   runApp(const MyApp());
 }
 
@@ -57,14 +62,17 @@ class MyApp extends StatelessWidget {
         BlocProvider<BottomNavBarBloc>(create: (context) => BottomNavBarBloc()),
         //Task
         BlocProvider<TaskBloc>(create: (context)=> TaskBloc(
-            getIt<AddTask>(),
-            getIt<AddTaskLocal>(),
-            getIt<DeleteTask>(),
-            getIt<GetTasks>(),
-            getIt<UpdateTasks>(),
-            getIt<CheckTaskTitle>(),
-            getIt<CheckTaskTitleLocal>(),
-            getIt<SharedPreferencesService>(),
+            addTask:  getIt<AddTask>(),
+            addTaskLocal:  getIt<AddTaskLocal>(),
+            deleteTask:  getIt<DeleteTask>(),
+            getTasks:  getIt<GetTasks>(),
+            updateTask:  getIt<UpdateTasks>(),
+            checkTaskTitle:  getIt<CheckTaskTitle>(),
+            checkTaskTitleLocal:  getIt<CheckTaskTitleLocal>(),
+            local:  getIt<SharedPreferencesService>(),
+            deleteAllTasksLocal: getIt<DeleteAllTasksLocal>(),
+            getTasksLocal: getIt<GetTasksLocal>(),
+            getTotalTasksLocal: getIt<GetTotalTasksLocal>()
         ))
       ],
       child: Builder(

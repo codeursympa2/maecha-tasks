@@ -15,7 +15,7 @@ class ConnectivityCheckerBloc extends Bloc<ConnectivityCheckerEvent, Connectivit
     val=0;
    //à l'initialisation du bloc
     _subscription = Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> connectivityResult) {
-      if (connectivityResult.contains(ConnectivityResult.mobile) || connectivityResult.contains(ConnectivityResult.wifi) || connectivityResult.contains(ConnectivityResult.ethernet)) {
+      if (connectivityResult.contains(ConnectivityResult.mobile) || connectivityResult.contains(ConnectivityResult.wifi) || connectivityResult.contains(ConnectivityResult.ethernet) ) {
         add(const CheckConnectionInternetEvent(result: true));
       }else{
         // No available network types

@@ -27,3 +27,7 @@ class CreateTaskLocaleEvent extends TaskEvent{
   @override
   List<Object?> get props => [task];
 }
+
+final class SyncDataToCloudFirestore extends TaskEvent{
+  const SyncDataToCloudFirestore();
+}

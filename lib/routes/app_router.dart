@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:maecha_tasks/global/injectable/injectable.dart';
+import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/pages/main_page.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/pages/splash_screen_page.dart';
 import 'package:maecha_tasks/src/features/task/presentation/pages/index_page.dart';
@@ -24,7 +26,7 @@ class AppRouter {
         ),
         GoRoute(
           path: '/home',
-          builder: (context, state) => const IndexPage(),
+          builder: (context, state) => IndexPage(sharedPref: getIt<SharedPreferencesService>(),),
         ),
         GoRoute(
           path: '/main',
