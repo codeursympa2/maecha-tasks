@@ -31,3 +31,12 @@ class CreateTaskLocaleEvent extends TaskEvent{
 final class SyncDataToCloudFirestore extends TaskEvent{
   const SyncDataToCloudFirestore();
 }
+
+final class GetTasksEvent extends TaskEvent{
+  const GetTasksEvent();
+}
+
+
+final class GetTasksLocalEvent extends TaskEvent{
+  const GetTasksLocalEvent();
+}

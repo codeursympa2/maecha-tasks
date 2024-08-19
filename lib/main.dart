@@ -72,7 +72,8 @@ class MyApp extends StatelessWidget {
             local:  getIt<SharedPreferencesService>(),
             deleteAllTasksLocal: getIt<DeleteAllTasksLocal>(),
             getTasksLocal: getIt<GetTasksLocal>(),
-            getTotalTasksLocal: getIt<GetTotalTasksLocal>()
+            getTotalTasksLocal: getIt<GetTotalTasksLocal>(),
+            connCheckerBloc: getIt<ConnectivityCheckerBloc>()
         ))
       ],
       child: Builder(

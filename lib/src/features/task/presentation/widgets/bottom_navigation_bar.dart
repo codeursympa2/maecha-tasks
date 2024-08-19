@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
-import 'package:maecha_tasks/global/injectable/injectable.dart';
-import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/features/task/presentation/pages/home_page.dart';
+import 'package:maecha_tasks/src/features/task/presentation/pages/list_tasks_page.dart';
 import 'package:maecha_tasks/src/features/task/presentation/pages/task_page.dart';
 
 BottomNavigationBar bottomNavigationBar(BuildContext context,int selectedIndex, onItemTapped)  {
@@ -73,7 +72,7 @@ Widget getPage(int index) {
     case 2:
       return  const TaskPage();
     case 3:
-      return const Text('Liste des tâches Page');
+      return const ListTasksPage();
     case 4:
       return const Text('Mon compte Page');
     default:

@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:equatable/equatable.dart';
+import 'package:injectable/injectable.dart';
 
 part 'connectivity_checker_event.dart';
 part 'connectivity_checker_state.dart';
 
+@lazySingleton
 class ConnectivityCheckerBloc extends Bloc<ConnectivityCheckerEvent, ConnectivityCheckerState> {
   late StreamSubscription<List<ConnectivityResult>> _subscription;
   late int val;

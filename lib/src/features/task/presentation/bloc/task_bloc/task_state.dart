@@ -16,6 +16,15 @@ final class TaskLoadingState extends TaskState {
   const TaskLoadingState();
 }
 
+class TaskLoadedState extends TaskState {
+  final List<TaskModel> taskList;
+  const TaskLoadedState({required this.taskList});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [taskList];
+}
+
 
 class TaskCreateSuccessState extends TaskState{
   final String message;
@@ -42,6 +51,12 @@ class TitleExistState extends TaskState{
   List<Object?> get props => [message];
 }
 
+final class EmptyListTasksState extends TaskState{
+  const EmptyListTasksState();
+}
+
+
+//
 final class SyncData extends TaskState{
   const SyncData();
 }

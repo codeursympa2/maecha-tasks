@@ -26,3 +26,5 @@ const String descCreateTask="Bienvenue sur la page de création de tâche ! Ajou
 const String failureAddTask="Echec de l'ajout de la tâche";
 const String titleExist="Ce titre existe dejà.";
 const String taskAdded="Tâche ajoutée";
+
+const String failedLoadList="Echec du chargement de la liste.";

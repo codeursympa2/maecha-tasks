@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
-import 'package:maecha_tasks/src/features/task/data/sources/local/task_local_data_source.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
 
 @injectable
@@ -21,11 +20,12 @@ class TaskRemoteDataSource {
     final docRef = await collectionReference.add({
       'title': task.title,
       'desc': task.desc,
-      'date': task.dateTime!.toIso8601String(), // Convertir DateTime en String
-      'priority': task.priority.toString(), // Convertir enum en String, ajuster selon votre implémentation
+      'dateTime': task.dateTime!.toIso8601String(), // Convertir DateTime en String
+      'priority': task.priority!.name, // Convertir enum en String, ajuster selon votre implémentation
       'user': task.user!.toJson(),
       'done': task.done,
-      'notify':task.notify
+      'notify':task.notify,
+      'createdAt': FieldValue.serverTimestamp()
     });
 
     // Récupérer l'ID généré et mettre à jour le document avec cet ID dans le champ 'id'
@@ -55,6 +55,7 @@ class TaskRemoteDataSource {
         .collection(collectionPath) // Collection principale
         .doc(task.user!.uid) // Document pour l'utilisateur spécifique
         .collection(secondCollectionPath) // Sous-collection pour les tâches de l'utilisateur
+        .orderBy('createdAt', descending: true) // Trier par la date de création en ordre décroissant
         .get(); // Récupérer tous les documents de la sous-collection
 
    //Conversion

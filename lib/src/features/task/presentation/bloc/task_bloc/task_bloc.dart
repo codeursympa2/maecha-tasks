@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
 import 'package:maecha_tasks/src/features/authentification/domain/entities/user_model/user_model.dart';
@@ -33,6 +36,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final DeleteAllTasksLocal deleteAllTasksLocal;
   //
   final SharedPreferencesService local;
+
+  //
+  final ConnectivityCheckerBloc connCheckerBloc;
+
   TaskBloc(
       {
       required this.addTask,
@@ -45,7 +52,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       required this.getTotalTasksLocal,
       required this.getTasksLocal,
       required this.deleteAllTasksLocal,
-      required this.local}) : super(const TaskInitialState()) {
+      required this.local,
+      required this.connCheckerBloc
+      }) : super(const TaskInitialState()) {
     on<TaskInitialEvent>((event, emit) {
       emit(const TaskInitialState());
     });
@@ -112,12 +121,44 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
          doub >= 1 ? await Future.delayed(const Duration(seconds: 2),()=> emit(DoublonState(message))) : null;
 
          emit(const SyncDataCompleted());
+         add(const GetTasksEvent());
        }catch(e){
          print(e);
          emit(const SyncDataFailure());
        }
       }
     });
+
+    on<GetTasksEvent>((event,emit) async{
+      emit(const TaskLoadingState());
+      try{
+        List<TaskModel> list = [];
+
+        // Vérifie l'état actuel de la connectivité
+        final currentState = connCheckerBloc.state;
+
+        if (currentState is ConnectionInternetState) {
+          // Connexion Internet disponible
+          list = await getTasks.call(TaskModel.getTasks(user: local.getUser()));
+        } else if (currentState is NoConnectionInternetState) {
+          // Pas de connexion, récupérer les tâches localement
+          await Future.delayed(const Duration(seconds: 2),() async {
+            list = await getTasksLocal.call();
+          });
+        }
+
+
+        if(list.isNotEmpty){
+          emit(TaskLoadedState(taskList: list));
+        }else{
+          emit(const EmptyListTasksState());
+        }
+      }catch(e){
+        print(e);
+        emit(const TaskFailureState(message: failedLoadList));
+      }
+    });
+
   }
 
   Future<void> _createTaskRemote(TaskModel task)async{
