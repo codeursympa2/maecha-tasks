@@ -32,6 +32,11 @@ final class SyncDataToCloudFirestore extends TaskEvent{
   const SyncDataToCloudFirestore();
 }
 
-final class GetTasksRemote extends TaskEvent{
-  const GetTasksRemote();
+final class GetTasksEvent extends TaskEvent{
+  const GetTasksEvent();
+}
+
+
+final class GetTasksLocalEvent extends TaskEvent{
+  const GetTasksLocalEvent();
 }
