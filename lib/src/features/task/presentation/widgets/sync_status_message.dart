@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
@@ -14,7 +13,7 @@ class SyncStatusMessage extends StatelessWidget {
         visible: isSyncing,
         child: Container(
           color: infoColorLight,
-          padding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 5),
           child:  const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,

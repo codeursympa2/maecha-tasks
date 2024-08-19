@@ -53,6 +53,6 @@ class MainPage extends StatelessWidget {
           ),
         ),
       ),
-    ), sharedPref: getIt<SharedPreferencesService>());
+    ));
   }
 }

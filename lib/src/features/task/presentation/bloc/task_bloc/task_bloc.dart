@@ -33,7 +33,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final DeleteAllTasksLocal deleteAllTasksLocal;
   //
   final SharedPreferencesService local;
-
   TaskBloc(
       {
       required this.addTask,

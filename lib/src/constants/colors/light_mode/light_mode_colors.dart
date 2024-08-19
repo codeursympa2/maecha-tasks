@@ -11,3 +11,8 @@ const Color skeletonColorLight=Color(0xFFF2F2F2);
 const Color successColorLight=Color(0xFF008536);
 const Color warningColorLight=Color(0xFFFB9500);
 const Color infoColorLight=Color(0xFF021D56);
+
+//Priority colors
+const Color mediumPriorityColor=Color(0xFFF5AA0A);
+const Color highPriorityColor=Color(0xFF2D75E3);
+const Color lowPriorityColor=Color(0xFF299C0C);

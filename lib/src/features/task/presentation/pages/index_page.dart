@@ -11,7 +11,9 @@ import 'package:maecha_tasks/src/features/task/presentation/widgets/sync_status_
 import 'package:maecha_tasks/src/utils/check_connectivity_listener_widget.dart';
 
 class IndexPage extends StatelessWidget {
-  const IndexPage({super.key});
+
+  final SharedPreferencesService sharedPref;
+  const IndexPage({super.key, required this.sharedPref});
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +30,15 @@ class IndexPage extends StatelessWidget {
         builder: (context, state) {
           return BlocListener<ConnectivityCheckerBloc,
               ConnectivityCheckerState>(
-            listener: (context, state) {
+            listener: (context, state) async {
               if (state is ConnectionInternetState) {
                 isConnected = true;
+                //Syncronisation si l'utilisateur est connecté
+                if(sharedPref.getUser() != null){
+                  await Future.delayed(const Duration(seconds: 4),
+                          () => BlocProvider.of<TaskBloc>(context).add(const SyncDataToCloudFirestore())
+                  );
+                }
               } else {
                 isConnected = false;
               }
@@ -76,7 +84,6 @@ class IndexPage extends StatelessWidget {
           );
         },
       ),
-      sharedPref: getIt<SharedPreferencesService>(),
     );
   }
 }

@@ -15,54 +15,56 @@ import 'package:injectable/injectable.dart' as _i2;
 import 'package:shared_preferences/shared_preferences.dart' as _i3;
 
 import '../../src/features/authentification/application/usecases/login_user.dart'
-    as _i29;
-import '../../src/features/authentification/application/usecases/register_user.dart'
     as _i30;
-import '../../src/features/authentification/application/usecases/send_verification_email.dart'
+import '../../src/features/authentification/application/usecases/register_user.dart'
     as _i31;
+import '../../src/features/authentification/application/usecases/send_verification_email.dart'
+    as _i32;
 import '../../src/features/authentification/data/repositories/auth_repositories_impl.dart'
-    as _i23;
+    as _i24;
 import '../../src/features/authentification/data/sources/network/firebase_auth_datasource.dart'
-    as _i16;
+    as _i17;
 import '../../src/features/authentification/data/sources/network/firestore_auth_datasource.dart'
-    as _i13;
+    as _i14;
 import '../../src/features/authentification/domain/repositories/auth_repository.dart'
-    as _i22;
+    as _i23;
 import '../../src/features/task/application/controllers/task_controller.dart'
     as _i10;
 import '../../src/features/task/application/usecases/local/add_task_local.dart'
-    as _i17;
-import '../../src/features/task/application/usecases/local/check_task_title_local.dart'
     as _i18;
-import '../../src/features/task/application/usecases/local/delete_all_tasks_local.dart'
+import '../../src/features/task/application/usecases/local/check_task_title_local.dart'
     as _i19;
-import '../../src/features/task/application/usecases/local/get_tasks_local.dart'
+import '../../src/features/task/application/usecases/local/delete_all_tasks_local.dart'
     as _i20;
-import '../../src/features/task/application/usecases/local/get_total_tasks_local.dart'
+import '../../src/features/task/application/usecases/local/get_tasks_local.dart'
     as _i21;
+import '../../src/features/task/application/usecases/local/get_total_tasks_local.dart'
+    as _i22;
 import '../../src/features/task/application/usecases/remote/add_task.dart'
-    as _i24;
-import '../../src/features/task/application/usecases/remote/check_task_title.dart'
     as _i25;
-import '../../src/features/task/application/usecases/remote/delete_task.dart'
+import '../../src/features/task/application/usecases/remote/check_task_title.dart'
     as _i26;
-import '../../src/features/task/application/usecases/remote/get_tasks.dart'
+import '../../src/features/task/application/usecases/remote/delete_task.dart'
     as _i27;
-import '../../src/features/task/application/usecases/remote/update_tasks.dart'
+import '../../src/features/task/application/usecases/remote/get_tasks.dart'
     as _i28;
+import '../../src/features/task/application/usecases/remote/update_tasks.dart'
+    as _i29;
 import '../../src/features/task/data/repositories/task_repository_impl.dart'
-    as _i15;
-import '../../src/features/task/data/sources/local/task_local_data_source.dart'
+    as _i16;
+import '../../src/features/task/data/sources/local/database_manager.dart'
     as _i7;
+import '../../src/features/task/data/sources/local/task_local_data_source.dart'
+    as _i11;
 import '../../src/features/task/data/sources/network/task_remote_data_source.dart'
-    as _i12;
+    as _i13;
 import '../../src/features/task/domain/repositories/task_repository.dart'
-    as _i14;
+    as _i15;
 import '../services/bottom_sheet_service.dart' as _i6;
 import '../services/easy_loading/easy_loading_service.dart' as _i5;
 import '../services/firebase_service.dart' as _i4;
-import '../services/shared_preferences_service.dart' as _i11;
-import 'injectable.dart' as _i32;
+import '../services/shared_preferences_service.dart' as _i12;
+import 'injectable.dart' as _i33;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -92,54 +94,56 @@ extension GetItInjectableX on _i1.GetIt {
       () => appModule.bottomSheetServ,
       preResolve: true,
     );
-    gh.factory<_i7.TaskLocalDataSource>(() => _i7.TaskLocalDataSource());
+    gh.factory<_i7.DatabaseManager>(() => _i7.DatabaseManager());
     gh.lazySingleton<_i8.FirebaseAuth>(() => appModule.firebaseAuth);
     gh.lazySingleton<_i9.FirebaseFirestore>(() => appModule.firebaseFirestore);
     gh.lazySingleton<_i10.TaskController>(() => _i10.TaskController());
-    gh.lazySingleton<_i11.SharedPreferencesService>(() =>
-        _i11.SharedPreferencesService(local: gh<_i3.SharedPreferences>()));
-    gh.factory<_i12.TaskRemoteDataSource>(
-        () => _i12.TaskRemoteDataSource(db: gh<_i9.FirebaseFirestore>()));
-    gh.factory<_i13.FirestoreAuthDatasource>(
-        () => _i13.FirestoreAuthDatasource(gh<_i9.FirebaseFirestore>()));
-    gh.lazySingleton<_i14.TaskRepository>(() => _i15.TaskRepositoryImpl(
-          remoteDataSource: gh<_i12.TaskRemoteDataSource>(),
-          localDataSource: gh<_i7.TaskLocalDataSource>(),
+    gh.lazySingleton<_i11.TaskLocalDataSource>(
+        () => _i11.TaskLocalDataSource(gh<_i7.DatabaseManager>()));
+    gh.lazySingleton<_i12.SharedPreferencesService>(() =>
+        _i12.SharedPreferencesService(local: gh<_i3.SharedPreferences>()));
+    gh.factory<_i13.TaskRemoteDataSource>(
+        () => _i13.TaskRemoteDataSource(db: gh<_i9.FirebaseFirestore>()));
+    gh.factory<_i14.FirestoreAuthDatasource>(
+        () => _i14.FirestoreAuthDatasource(gh<_i9.FirebaseFirestore>()));
+    gh.lazySingleton<_i15.TaskRepository>(() => _i16.TaskRepositoryImpl(
+          remoteDataSource: gh<_i13.TaskRemoteDataSource>(),
+          localDataSource: gh<_i11.TaskLocalDataSource>(),
         ));
-    gh.factory<_i16.FirebaseAuthDatasource>(() => _i16.FirebaseAuthDatasource(
+    gh.factory<_i17.FirebaseAuthDatasource>(() => _i17.FirebaseAuthDatasource(
           gh<_i8.FirebaseAuth>(),
-          gh<_i13.FirestoreAuthDatasource>(),
+          gh<_i14.FirestoreAuthDatasource>(),
         ));
-    gh.lazySingleton<_i17.AddTaskLocal>(
-        () => _i17.AddTaskLocal(gh<_i14.TaskRepository>()));
-    gh.lazySingleton<_i18.CheckTaskTitleLocal>(
-        () => _i18.CheckTaskTitleLocal(gh<_i14.TaskRepository>()));
-    gh.lazySingleton<_i19.DeleteAllTasksLocal>(
-        () => _i19.DeleteAllTasksLocal(gh<_i14.TaskRepository>()));
-    gh.lazySingleton<_i20.GetTasksLocal>(
-        () => _i20.GetTasksLocal(gh<_i14.TaskRepository>()));
-    gh.lazySingleton<_i21.GetTotalTasksLocal>(
-        () => _i21.GetTotalTasksLocal(gh<_i14.TaskRepository>()));
-    gh.lazySingleton<_i22.AuthRepository>(
-        () => _i23.AuthRepositoriesImpl(gh<_i16.FirebaseAuthDatasource>()));
-    gh.lazySingleton<_i24.AddTask>(
-        () => _i24.AddTask(repository: gh<_i14.TaskRepository>()));
-    gh.lazySingleton<_i25.CheckTaskTitle>(
-        () => _i25.CheckTaskTitle(repository: gh<_i14.TaskRepository>()));
-    gh.lazySingleton<_i26.DeleteTask>(
-        () => _i26.DeleteTask(repository: gh<_i14.TaskRepository>()));
-    gh.lazySingleton<_i27.GetTasks>(
-        () => _i27.GetTasks(repository: gh<_i14.TaskRepository>()));
-    gh.lazySingleton<_i28.UpdateTasks>(
-        () => _i28.UpdateTasks(repository: gh<_i14.TaskRepository>()));
-    gh.lazySingleton<_i29.LoginUser>(
-        () => _i29.LoginUser(gh<_i22.AuthRepository>()));
-    gh.lazySingleton<_i30.RegisterUser>(
-        () => _i30.RegisterUser(gh<_i22.AuthRepository>()));
-    gh.lazySingleton<_i31.SendVerificationEmail>(
-        () => _i31.SendVerificationEmail(gh<_i22.AuthRepository>()));
+    gh.lazySingleton<_i18.AddTaskLocal>(
+        () => _i18.AddTaskLocal(gh<_i15.TaskRepository>()));
+    gh.lazySingleton<_i19.CheckTaskTitleLocal>(
+        () => _i19.CheckTaskTitleLocal(gh<_i15.TaskRepository>()));
+    gh.lazySingleton<_i20.DeleteAllTasksLocal>(
+        () => _i20.DeleteAllTasksLocal(gh<_i15.TaskRepository>()));
+    gh.lazySingleton<_i21.GetTasksLocal>(
+        () => _i21.GetTasksLocal(gh<_i15.TaskRepository>()));
+    gh.lazySingleton<_i22.GetTotalTasksLocal>(
+        () => _i22.GetTotalTasksLocal(gh<_i15.TaskRepository>()));
+    gh.lazySingleton<_i23.AuthRepository>(
+        () => _i24.AuthRepositoriesImpl(gh<_i17.FirebaseAuthDatasource>()));
+    gh.lazySingleton<_i25.AddTask>(
+        () => _i25.AddTask(repository: gh<_i15.TaskRepository>()));
+    gh.lazySingleton<_i26.CheckTaskTitle>(
+        () => _i26.CheckTaskTitle(repository: gh<_i15.TaskRepository>()));
+    gh.lazySingleton<_i27.DeleteTask>(
+        () => _i27.DeleteTask(repository: gh<_i15.TaskRepository>()));
+    gh.lazySingleton<_i28.GetTasks>(
+        () => _i28.GetTasks(repository: gh<_i15.TaskRepository>()));
+    gh.lazySingleton<_i29.UpdateTasks>(
+        () => _i29.UpdateTasks(repository: gh<_i15.TaskRepository>()));
+    gh.lazySingleton<_i30.LoginUser>(
+        () => _i30.LoginUser(gh<_i23.AuthRepository>()));
+    gh.lazySingleton<_i31.RegisterUser>(
+        () => _i31.RegisterUser(gh<_i23.AuthRepository>()));
+    gh.lazySingleton<_i32.SendVerificationEmail>(
+        () => _i32.SendVerificationEmail(gh<_i23.AuthRepository>()));
     return this;
   }
 }
 
-class _$AppModule extends _i32.AppModule {}
+class _$AppModule extends _i33.AppModule {}

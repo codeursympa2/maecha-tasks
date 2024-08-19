@@ -16,15 +16,16 @@ class SplashScreenPage extends StatefulWidget {
 
 class _SplashScreenPageState extends State<SplashScreenPage> {
 
-  late AppLifecycleListener _listener;
-
   @override
   void initState() {
     super.initState();
-    _listener = AppLifecycleListener(
-        onStateChange: _onStateChange()
-    );
+    _checkUserAuthenticated();
   }
+
+  void _checkUserAuthenticated(){
+    BlocProvider.of<AuthBloc>(context).add(const CheckConnectUserEvent());
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +44,5 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
 
 
 
-  _onStateChange() {
-    //getIt<FirebaseAuth>().signOut();
-    //getIt<SharedPreferencesService>().clearData("user");
-    BlocProvider.of<AuthBloc>(context).add(const CheckConnectUserEvent());
-  }
+
 }

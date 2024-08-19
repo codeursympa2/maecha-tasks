@@ -24,12 +24,14 @@ import 'package:maecha_tasks/src/features/task/application/usecases/remote/check
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/delete_task.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/get_tasks.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/update_tasks.dart';
+import 'package:maecha_tasks/src/features/task/data/sources/local/database_manager.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/bottom_nav_bloc/bottom_nav_bar_bloc.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
+  await getIt<DatabaseManager>().initializeDatabase();  // Initialiser la base de données ici
   runApp(const MyApp());
 }
 

@@ -6,32 +6,34 @@ import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
 
-Widget checkConnectivityListenerWidget({required Widget child,required SharedPreferencesService sharedPref}){
-  return BlocListener<ConnectivityCheckerBloc, ConnectivityCheckerState>(
-    listener: (context, state) {
-      if(state is NoConnectionInternetState){
-        // Show snackbar when there is no connection
-        scaffoldMessenger(context, "Pas de connexion internet",Icons.signal_wifi_connected_no_internet_4, dangerLight);
-      }
-      if(state is ConnectionInternetState){
-        //Syncronisation si l'utilisateur est connecté
-        if(sharedPref.getUser() != null){
-          BlocProvider.of<TaskBloc>(context).add(const SyncDataToCloudFirestore());
+const _duration=Duration(seconds: 3);
+Widget checkConnectivityListenerWidget({required Widget child}){
+  return MultiBlocListener(listeners: [
+      BlocListener<TaskBloc,TaskState>(listener: (context,taskState){
+        if(taskState is SyncDataCompleted){
         }
-        if(!state.firstTime){
-          scaffoldMessenger(context, "Reconnecté à internet",Icons.wifi, successColorLight);
+        if(taskState is SyncDataFailure){
+          scaffoldMessenger(context, "Echec de la synchronisation",Icons.sync_disabled_sharp, successColorLight);
         }
-      }
+      }),
+      BlocListener<ConnectivityCheckerBloc, ConnectivityCheckerState>(
+      listener: (context, connectionState)  {
+        if(connectionState is NoConnectionInternetState){
+          // Show snackbar when there is no connection
+          scaffoldMessenger(context, "Pas de connexion internet",Icons.signal_wifi_connected_no_internet_4, dangerLight);
+        }
+        if(connectionState is ConnectionInternetState){
+          //
+          if(!connectionState.firstTime){
+            scaffoldMessenger(context, "Reconnecté à internet",Icons.wifi, successColorLight);
+          }
+        }
 
 
-      if(state is SyncDataCompleted){
-      }
-
-      if(state is SyncData){
-        scaffoldMessenger(context, "Echec de la syncronisation",Icons.sync_disabled_sharp, successColorLight);
-      }
-    },
-    child: child,
+      },
+      )
+  ],
+      child: child
   );
 }
 
@@ -49,7 +51,7 @@ scaffoldMessenger(BuildContext context,String message,IconData iconData,Color ba
         ],
       ),
       backgroundColor: backColor,
-      duration: const Duration(seconds: 3),
+      duration: _duration,
     ),
   );
 }
