@@ -37,26 +37,29 @@ class _ListTasksState extends State<ListTasks> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<TaskBloc,TaskState>(builder: (context,state){
-      if(state is TaskLoadingState){
-        return const Center(child: CircularProgressIndicator());
-      }
-      else if (state is TaskLoadedState) {
-        final list=state.taskList;
-        return ListView.builder(
-          itemCount: list.length,
-          itemBuilder: (context, index) {
-            return TaskCard(task: list[index]);
-          },
-        );
-      } else if (state is TaskFailureState) {
-        return Center(child: Text('Erreur : ${state.message}'));
-      } else {
-        return const Center(child: Text('Aucune tâche disponible.'));
-      }
-
-
-    },
+    return BlocBuilder<TaskBloc, TaskState>(
+      builder: (context, state) {
+        if (state is TaskLoadingState) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is TaskLoadedState) {
+          final list = state.taskList;
+          return RefreshIndicator(
+            onRefresh: () async {
+              // Recharger les tâches en déclenchant l'événement
+              BlocProvider.of<TaskBloc>(context).add(const GetTasksRemote());
+            },
+            child: ListView.builder(
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                return TaskCard(task: list[index]);
+              },
+            ),
+          );
+        } else if (state is TaskFailureState) {
+          return Center(child: Text('Erreur : ${state.message}'));
+        } else {
+          return const Center(child: Text('Aucune tâche disponible.'));
+        }
+      },
     );
-  }
-}
+  }}
