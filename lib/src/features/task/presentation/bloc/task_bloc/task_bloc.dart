@@ -118,6 +118,24 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
        }
       }
     });
+
+    on<GetTasksRemote>((event,emit) async{
+      emit(const TaskLoadingState());
+
+      try{
+        List<TaskModel> list = await getTasks.call(TaskModel.getTasks(user:local.getUser()));
+
+        if(list.isNotEmpty){
+          print(list);
+          emit(TaskLoadedState(taskList: list));
+        }else{
+          emit(const EmptyListTasksState());
+        }
+      }catch(e){
+        print(e);
+        emit(const TaskFailureState(message: "Echec du chargement de la liste."));
+      }
+    });
   }
 
   Future<void> _createTaskRemote(TaskModel task)async{
