@@ -56,6 +56,7 @@ dependencies:
   intl: ^0.19.0
   sqflite: ^2.3.3+1
   connectivity_plus: ^6.0.5
+  shimmer_animation: ^2.1.0+1
 
 dev_dependencies:
   flutter_test:

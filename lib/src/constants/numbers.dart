@@ -7,3 +7,6 @@ const double paddingPagesApp=29;
 
 const double roundedButton=10;
 const double buttonHeight=50;
+
+const double marginVerticalCard=6;
+const double radiusTaskCard=8;
