@@ -25,6 +25,14 @@ class TaskLoadedState extends TaskState {
   List<Object?> get props => [taskList];
 }
 
+class ListTaskFilteredState extends TaskState {
+  final List<TaskModel> taskList;
+  const ListTaskFilteredState({required this.taskList});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [taskList];
+}
 
 class TaskCreateSuccessState extends TaskState{
   final String message;

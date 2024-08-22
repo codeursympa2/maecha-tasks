@@ -70,7 +70,14 @@ const TextTheme textTheme=TextTheme(
       fontFamily: quicksand,
       color: primaryTextLight,
       fontSize: labelMediumSize
-  )
+  ),
+  //Quicksand 16 bold filter
+ headlineMedium: TextStyle(
+      fontFamily: quicksand,
+      fontWeight: FontWeight.bold,
+      color: backgroundLight,
+      fontSize: labelMediumSize
+  ),
 );
 
 

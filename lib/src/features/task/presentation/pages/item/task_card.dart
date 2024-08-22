@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
+import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
 import 'package:maecha_tasks/src/features/task/domain/value_objects/task_priority.dart';
 
@@ -14,9 +15,9 @@ class TaskCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Color currentPriorityColor=_getColorTaskByPriority(task.priority!.name);
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
+      margin: const EdgeInsets.symmetric(vertical: marginVerticalCard ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8)
+        borderRadius: BorderRadius.circular(radiusTaskCard)
       ),
       color: backgroundLight,
       child: Column(
@@ -26,7 +27,7 @@ class TaskCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: currentPriorityColor,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(radiusTaskCard)),
             ),
             child: Row(
               children: [
@@ -55,9 +56,9 @@ class TaskCard extends StatelessWidget {
               const Gap(6),
               Row(
                 children: [
-                  HeroIcon(HeroIcons.clock,style: HeroIconStyle.solid, color: currentPriorityColor, size: 16),
+                  const HeroIcon(HeroIcons.clock,style: HeroIconStyle.solid, color: secondaryTextLight, size: 16),
                   const Gap(4),
-                  Text(_getDateDecompose(task.dateTime!, "hour"), style: TextStyle(color: currentPriorityColor)),
+                  Text(_getDateDecompose(task.dateTime!, "hour"), style: const TextStyle(color: secondaryTextLight)),
                   const Spacer(),
                   const HeroIcon(HeroIcons.calendar,style: HeroIconStyle.solid, color: secondaryTextLight, size: 16),
                   const Gap(4),

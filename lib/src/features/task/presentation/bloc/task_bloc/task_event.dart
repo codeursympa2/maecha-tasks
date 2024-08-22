@@ -36,6 +36,16 @@ final class GetTasksEvent extends TaskEvent{
   const GetTasksEvent();
 }
 
+class FilterTasksEvent extends TaskEvent{
+  final List<TaskModel> list;
+  final int tag;
+  const FilterTasksEvent({required this.list,required this.tag});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [list,tag];
+}
+
 
 final class GetTasksLocalEvent extends TaskEvent{
   const GetTasksLocalEvent();
