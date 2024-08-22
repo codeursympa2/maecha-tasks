@@ -56,9 +56,9 @@ class TaskCard extends StatelessWidget {
               const Gap(6),
               Row(
                 children: [
-                  HeroIcon(HeroIcons.clock,style: HeroIconStyle.solid, color: currentPriorityColor, size: 16),
+                  const HeroIcon(HeroIcons.clock,style: HeroIconStyle.solid, color: secondaryTextLight, size: 16),
                   const Gap(4),
-                  Text(_getDateDecompose(task.dateTime!, "hour"), style: TextStyle(color: currentPriorityColor)),
+                  Text(_getDateDecompose(task.dateTime!, "hour"), style: const TextStyle(color: secondaryTextLight)),
                   const Spacer(),
                   const HeroIcon(HeroIcons.calendar,style: HeroIconStyle.solid, color: secondaryTextLight, size: 16),
                   const Gap(4),

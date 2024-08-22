@@ -17,6 +17,7 @@ import 'package:maecha_tasks/src/features/task/application/usecases/remote/delet
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/get_tasks.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/update_tasks.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
+import 'package:maecha_tasks/src/features/task/presentation/utils/utils.dart';
 
 part 'task_event.dart';
 part 'task_state.dart';
@@ -147,7 +148,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           });
         }
 
-
         if(list.isNotEmpty){
           emit(TaskLoadedState(taskList: list));
         }else{
@@ -159,7 +159,49 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       }
     });
 
+    on<FilterTasksEvent>((event,emit){
+      if (event.tag == -1) {
+        emit(TaskLoadedState(taskList: event.list)) ;
+      }else{
+        final now = DateTime.now();
+
+        final filteredTasks = event.list.where((task) {
+          if (task.dateTime == null) return false;
+
+          switch (event.tag) {
+            case 0: // Aujourd'hui
+              return isSameDay(task.dateTime!, now);
+            case 1: // Hier
+              final yesterday = now.subtract(const Duration(days: 1));
+              return isSameDay(task.dateTime!, yesterday);
+            case 2: // Demain
+              final tomorrow = now.add(const Duration(days: 1));
+              return isSameDay(task.dateTime!, tomorrow);
+            case 3: // Semaine prochaine
+              final nextWeekStart = now.add(Duration(days: (7 - now.weekday + 1)));
+              final nextWeekEnd = nextWeekStart.add(const Duration(days: 6));
+              return task.dateTime!.isAfter(nextWeekStart) &&
+                  task.dateTime!.isBefore(nextWeekEnd);
+            case 4: // Mois passé
+              final lastMonth = DateTime(now.year, now.month - 1);
+              return isSameMonth(task.dateTime!, lastMonth);
+            case 5: // Mois prochain
+              final nextMonth = DateTime(now.year, now.month + 1);
+              return isSameMonth(task.dateTime!, nextMonth);
+            default: // Aujourd'hui
+              return isSameDay(task.dateTime!, now);
+          }
+        }).toList();
+
+
+         emit(ListTaskFilteredState(taskList: filteredTasks));
+      }
+
+    });
+
   }
+
+
 
   Future<void> _createTaskRemote(TaskModel task)async{
     //recupération de currentUser
