@@ -8,16 +8,17 @@ import 'package:maecha_tasks/src/features/task/domain/value_objects/task_priorit
 
 class TaskCard extends StatelessWidget {
   final TaskModel task;
+  final VoidCallback onTapOptions;
 
-  const TaskCard({super.key, required this.task});
+  const TaskCard({super.key, required this.task,required this.onTapOptions});
 
   @override
   Widget build(BuildContext context) {
     Color currentPriorityColor=_getColorTaskByPriority(task.priority!.name);
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: marginVerticalCard ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(radiusTaskCard)
+      margin: const EdgeInsets.all(0),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(radiusTaskCard))
       ),
       color: backgroundLight,
       child: Column(
@@ -37,7 +38,8 @@ class TaskCard extends StatelessWidget {
                   style: const TextStyle(color: backgroundLight),
                 ),
                 const Spacer(),
-                const Icon(Icons.more_horiz, color: backgroundLight),
+
+                //A venir
               ],
             ),
           ),

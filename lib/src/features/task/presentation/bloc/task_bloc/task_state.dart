@@ -16,6 +16,10 @@ final class TaskLoadingState extends TaskState {
   const TaskLoadingState();
 }
 
+final class TaskLoadingShimmerState extends TaskState {
+  const TaskLoadingShimmerState();
+}
+
 class TaskLoadedState extends TaskState {
   final List<TaskModel> taskList;
   const TaskLoadedState({required this.taskList});
@@ -43,9 +47,26 @@ class TaskCreateSuccessState extends TaskState{
   List<Object?> get props => [message];
 }
 
+class TaskDeleteSuccessState extends TaskState{
+  final String message;
+  const TaskDeleteSuccessState({required this.message});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [message];
+}
+
 class TaskFailureState extends TaskState{
   final String message;
   const TaskFailureState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class TaskDeleteFailureState extends TaskState{
+  final String message;
+  const TaskDeleteFailureState({required this.message});
 
   @override
   List<Object?> get props => [message];

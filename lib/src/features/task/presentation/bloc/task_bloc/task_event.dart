@@ -50,3 +50,13 @@ class FilterTasksEvent extends TaskEvent{
 final class GetTasksLocalEvent extends TaskEvent{
   const GetTasksLocalEvent();
 }
+
+
+class DeleteTaskRemoteEvent extends TaskEvent{
+  final TaskModel task;
+
+  const DeleteTaskRemoteEvent({required this.task});
+
+  @override
+  List<Object?> get props => [task];
+}

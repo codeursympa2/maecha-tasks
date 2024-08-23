@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
@@ -131,7 +132,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     });
 
     on<GetTasksEvent>((event,emit) async{
-      emit(const TaskLoadingState());
+      emit(const TaskLoadingShimmerState());
       try{
         List<TaskModel> list = [];
 
@@ -140,7 +141,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
         if (currentState is ConnectionInternetState) {
           // Connexion Internet disponible
-          list = await getTasks.call(TaskModel.getTasks(user: local.getUser()));
+          list = await _getTasksWithoutShimmerLoader();
         } else if (currentState is NoConnectionInternetState) {
           // Pas de connexion, récupérer les tâches localement
           await Future.delayed(const Duration(seconds: 2),() async {
@@ -199,6 +200,29 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     });
 
+    on<DeleteTaskRemoteEvent>((event,emit)async{
+      emit(const TaskLoadingState());
+
+      try{
+        await deleteTask.call(event.task).whenComplete(()async{
+          //on emet
+          emit(const TaskDeleteSuccessState(message: taskDeleted));
+          //Et on recharge la liste
+          List<TaskModel> list =await _getTasksWithoutShimmerLoader();
+
+          if(list.isNotEmpty){
+            emit(TaskLoadedState(taskList: list));
+          }else{
+            emit(const EmptyListTasksState());
+            //Fermeture de dialog
+            EasyLoading.dismiss();
+          }
+        });
+      }catch(e){
+        emit( TaskDeleteFailureState(message: "$failureDeleteTask \n: $e"));
+      }
+    });
+
   }
 
 
@@ -211,5 +235,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<bool> _checkTitleRemote(TaskModel task)async{
     return !(await checkTaskTitle.call(TaskModel.getTitle(title: task.title, user: local.getUser(),)));
+  }
+
+  Future<List<TaskModel>> _getTasksWithoutShimmerLoader()async{
+    return await getTasks.call(TaskModel.getTasks(user: local.getUser()));
   }
 }
