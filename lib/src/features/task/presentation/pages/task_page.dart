@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/constants/numbers.dart';
@@ -18,59 +19,67 @@ import 'package:maecha_tasks/src/features/task/presentation/widgets/form_widgets
 import 'package:maecha_tasks/src/utils/easy_loading_messages.dart';
 
 class TaskPage extends StatelessWidget {
-  const TaskPage({super.key});
+  final TaskModel? task;
+
+  const TaskPage({super.key, this.task});
 
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<TaskBloc>(context).add(const GetTaskModifyEvent());
 
     return Scaffold(
       body: MultiBlocListener(
-      listeners: [
-        
-      BlocListener<TaskBloc, TaskState>(
-      listener: (context, state) {
-        if(state is TaskLoadingState){
-          showCustomMessage(message: waiting);
-        }
+        listeners: [
+          BlocListener<TaskBloc, TaskState>(
+            listener: (context, state) {
+              if (state is TaskLoadingState) {
+                showCustomMessage(message: waiting);
+              }
 
-        if(state is TaskCreateSuccessState){
-          showCustomSuccess(message: state.message);
-          BlocProvider.of<BottomNavBarBloc>(context).add(
-              const GoToPageEvent(pathName: "task-list"));
-        }
+              if (state is TaskCreateSuccessState) {
+                showCustomSuccess(message: state.message);
+                BlocProvider.of<BottomNavBarBloc>(context).add(
+                    const GoToPageEvent(pathName: "task-list"));
+              }
 
-        if(state is TitleExistState){
-          showCustomError(message: state.message);
-        }
+              if (state is TitleExistState) {
+                showCustomError(message: state.message);
+              }
 
-        if(state is TaskFailureState){
-          showCustomError(message: state.message);
-        }
-      },
-),
-     ],
-  child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(paddingPagesApp),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-            Text(createTask,style: Theme.of(context).textTheme.displayLarge,),
-            const Gap(16),
-            Text(descCreateTask,style: Theme.of(context).textTheme.titleMedium,),
-            const Gap(16),
-            const _TaskForm()
-          ],),
+              if (state is TaskFailureState) {
+                showCustomError(message: state.message);
+              }
+            },
+          ),
+        ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(paddingPagesApp),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(createTask,
+                    style: Theme.of(context).textTheme.displayLarge),
+                const Gap(16),
+                Text(descCreateTask,
+                    style: Theme.of(context).textTheme.titleMedium),
+                const Gap(16),
+                _TaskForm(task: task)
+              ],
+            ),
+          ),
         ),
-      ),
       ),
     );
   }
 }
 
+
 class _TaskForm extends StatefulWidget {
-  const _TaskForm({super.key});
+  final TaskModel? task;
+
+  const _TaskForm({super.key,required this.task});
 
   @override
   State<_TaskForm> createState() => _TaskFormState();
@@ -105,6 +114,13 @@ class _TaskFormState extends State<_TaskForm> {
   @override
   void initState() {
      super.initState();
+
+     if(widget.task != null){
+       _titleController.text=widget.task!.title!;
+       _descController.text=widget.task!.desc!;
+       _notificationsEnabled=widget.task!.notify!;
+
+     }
   }
 
   void _onChangedNotifyValue(bool value) {

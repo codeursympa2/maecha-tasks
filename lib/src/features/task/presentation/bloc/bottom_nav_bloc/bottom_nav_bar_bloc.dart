@@ -1,13 +1,17 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
 
 part 'bottom_nav_bar_event.dart';
 part 'bottom_nav_bar_state.dart';
 
 class BottomNavBarBloc extends Bloc<BottomNavBarEvent, BottomNavBarState> {
-  BottomNavBarBloc() : super(BottomNavBarInitialState()) {
+  final TaskBloc taskBloc;
+  BottomNavBarBloc({required this.taskBloc}) : super(BottomNavBarInitialState()) {
     on<GoToPageEvent>((event, emit) {
         final String path=event.pathName;
+
 
         switch (path) {
           case "home":
@@ -34,6 +38,8 @@ class BottomNavBarBloc extends Bloc<BottomNavBarEvent, BottomNavBarState> {
         case 1:
           emit(const GetIndexPage(index: 1));
         case 2:
+          //On donne paas de tâche
+          //taskBloc.add(const SetTaskModifyEvent());
           emit(const GetIndexPage(index: 2));
         case 3:
           emit(const GetIndexPage(index: 3));

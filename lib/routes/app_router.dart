@@ -4,6 +4,8 @@ import 'package:maecha_tasks/global/injectable/injectable.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/pages/main_page.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/pages/splash_screen_page.dart';
+import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
+import 'package:maecha_tasks/src/features/task/presentation/pages/detail_task_page.dart';
 import 'package:maecha_tasks/src/features/task/presentation/pages/index_page.dart';
 
 class AppRouter {
@@ -25,8 +27,49 @@ class AppRouter {
           // },
         ),
         GoRoute(
-          path: '/home',
-          builder: (context, state) => IndexPage(sharedPref: getIt<SharedPreferencesService>(),),
+          path: '/index',
+          builder: (context, state)  {
+            final extras = state.extra as Map<String, dynamic>;
+            //Index via bottom nav bar
+            final index = extras['index'] as int;
+            //L'objet task en cas de mise à jour task
+            final task = extras['task'] as TaskModel?;
+            return IndexPage(sharedPref: getIt<SharedPreferencesService>(), defaultIndex: index,taskModel: task,);
+          },
+        ),
+        GoRoute(
+          path: '/detail-task',
+          pageBuilder: (context, state)
+          {
+            final task = state.extra as TaskModel;
+            return CustomTransitionPage<void>(
+              key: state.pageKey,
+              child:DetailTaskPage(task: task),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) =>
+                      ScaleTransition(scale: animation, child: child),
+            );
+          },
+
+        ),GoRoute(
+          path: '/add-task',
+          builder: (context, state) {
+            return IndexPage(
+              sharedPref: getIt<SharedPreferencesService>(),
+              defaultIndex: 2,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/edit-task',
+          builder: (context, state) {
+            final task = state.extra as TaskModel?;
+            return IndexPage(
+              sharedPref: getIt<SharedPreferencesService>(),
+              defaultIndex: 2,
+              taskModel: task,
+            );
+          },
         ),
         GoRoute(
           path: '/main',

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
-import 'package:maecha_tasks/src/features/task/presentation/pages/home_page.dart';
-import 'package:maecha_tasks/src/features/task/presentation/pages/list_tasks_page.dart';
-import 'package:maecha_tasks/src/features/task/presentation/pages/task_page.dart';
 
 BottomNavigationBar bottomNavigationBar(BuildContext context,int selectedIndex, onItemTapped)  {
   return BottomNavigationBar(
@@ -62,23 +59,7 @@ BottomNavigationBarItem _buildBottomNavigationBarItem({
   );
 }
 
-Widget getPage(int index) {
-  // Return the appropriate widget for each tab
-  switch (index) {
-    case 0:
-      return const HomePage();
-    case 1:
-      return const Text('Agenda Page');
-    case 2:
-      return  const TaskPage();
-    case 3:
-      return const ListTasksPage();
-    case 4:
-      return const Text('Mon compte Page');
-    default:
-      return const Text('Home Page');
-  }
-}
+
 
 final List<String> _bottomNavItems = [
   'Accueil',

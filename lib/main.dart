@@ -59,7 +59,7 @@ class MyApp extends StatelessWidget {
         //Auth form
         BlocProvider<AuthFormBloc>(create: (context) => AuthFormBloc()),
         //Bottom nav bloc
-        BlocProvider<BottomNavBarBloc>(create: (context) => BottomNavBarBloc()),
+        BlocProvider<BottomNavBarBloc>(create: (context) => BottomNavBarBloc(taskBloc: getIt<TaskBloc>())),
         //Task
         BlocProvider<TaskBloc>(create: (context)=> TaskBloc(
             addTask:  getIt<AddTask>(),

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
@@ -66,6 +67,7 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
   ];
   //Slidable
   late final controller = SlidableController(this);
+
 
   @override
   void initState() {
@@ -262,16 +264,31 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
                       TaskModel currentTask=listTasks[index];
                       return Column(
                         children: [
-                          Slidable(
-                              key: const ValueKey(0),
-                              startActionPane: actionTask(currentTask),
-                              endActionPane: actionTask(currentTask),
-                              closeOnScroll: true,
-                              child:TaskCard(
-                                task: currentTask,
-                                onTapOptions: (){
-                                  //En cliquant sur les 3 points
-                                },)
+                          BlocBuilder<ConnectivityCheckerBloc,ConnectivityCheckerState>(
+                              builder: (BuildContext context, ConnectivityCheckerState state) {
+                                //En cas de connexion
+                                if(state is ConnectionInternetState){
+                                  return Slidable(
+                                      key: const ValueKey(0),
+                                      startActionPane: actionTask(currentTask),
+                                      endActionPane: actionTask(currentTask),
+                                      closeOnScroll: true,
+                                      child: GestureDetector(
+                                          onTap: (){
+                                            //Aller à la partie detail
+                                            context.go("/detail-task",extra: currentTask);
+                                          },
+                                          child: _taskCard(currentTask)
+                                      )
+                                  );
+                                }
+                                //en absence de la copnnexion pas suppression ni partage
+                                else if(state is NoConnectionInternetState){
+                                  return _taskCard(currentTask);
+                                }else{
+                                  return const Gap(0);
+                                }
+                              },
                           ),
                           const Gap(marginVerticalCard+5),
                         ],
@@ -349,5 +366,13 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
         const Gap(4),
       ],
     );
+  }
+
+  Widget _taskCard(TaskModel task) {
+    return TaskCard(
+      task: task,
+      onTapOptions: (){
+        //En cliquant sur les 3 points
+      },);
   }
 }

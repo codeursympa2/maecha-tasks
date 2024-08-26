@@ -17,6 +17,7 @@ class TaskModel extends Equatable{
   final bool? notify;
   final bool? done;
 
+  const TaskModel.nullConst({this.id, this.title, this.desc, this.dateTime,this.user, this.priority, this.notify, this.done});
   const TaskModel({this.id, required this.title, required this.desc, required this.dateTime,required this.user, required this.priority,required this.notify,required this.done});
   const TaskModel.addTask({this.id, required this.title, required this.desc, required this.dateTime,this.user, required this.priority,required this.notify,required this.done});
 

@@ -32,7 +32,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if(state is AuthAuthenticatedState){
-          context.go("/home");
+          context.go('/index',extra: {'index':0,});
         }
 
         if(state is AuthUnauthenticatedState){

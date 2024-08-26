@@ -104,4 +104,8 @@ class DoublonState extends TaskState{
   const DoublonState(this.message);
 }
 
-
+//Pour recupérer la tâche en cours à modifier
+final class GetTaskModifyState extends TaskState{
+  final TaskModel? task;
+  const GetTaskModifyState({this.task});
+}

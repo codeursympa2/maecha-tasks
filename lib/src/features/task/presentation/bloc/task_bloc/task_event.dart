@@ -60,3 +60,17 @@ class DeleteTaskRemoteEvent extends TaskEvent{
   @override
   List<Object?> get props => [task];
 }
+
+final class GetTaskModifyEvent extends TaskEvent{
+  const GetTaskModifyEvent();
+}
+
+class SetTaskModifyEvent extends TaskEvent{
+  final TaskModel? task;
+  const SetTaskModifyEvent({this.task});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [task];
+}
+

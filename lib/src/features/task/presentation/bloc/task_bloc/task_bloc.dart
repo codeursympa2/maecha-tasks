@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:injectable/injectable.dart';
 import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
@@ -23,6 +24,7 @@ import 'package:maecha_tasks/src/features/task/presentation/utils/utils.dart';
 part 'task_event.dart';
 part 'task_state.dart';
 
+@lazySingleton
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   //remote
   final AddTask addTask;
@@ -42,6 +44,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   //
   final ConnectivityCheckerBloc connCheckerBloc;
 
+  late final TaskModel? task;
+
   TaskBloc(
       {
       required this.addTask,
@@ -57,6 +61,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       required this.local,
       required this.connCheckerBloc
       }) : super(const TaskInitialState()) {
+
+    task=null;
+
     on<TaskInitialEvent>((event, emit) {
       emit(const TaskInitialState());
     });
@@ -223,6 +230,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       }
     });
 
+    on<SetTaskModifyEvent>((event,emit){
+      task=event.task;
+    });
+
+    on<GetTaskModifyEvent>((event,emit){
+      emit(GetTaskModifyState(task: task));
+    });
+
   }
 
 
@@ -240,4 +255,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   Future<List<TaskModel>> _getTasksWithoutShimmerLoader()async{
     return await getTasks.call(TaskModel.getTasks(user: local.getUser()));
   }
+
+
 }
