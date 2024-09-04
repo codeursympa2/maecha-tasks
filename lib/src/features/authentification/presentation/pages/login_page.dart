@@ -8,6 +8,7 @@ import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
+import 'package:maecha_tasks/src/constants/strings/paths.dart';
 import 'package:maecha_tasks/src/constants/strings/strings.dart';
 import 'package:maecha_tasks/src/features/authentification/domain/entities/auth_form_fields_model.dart';
 import 'package:maecha_tasks/src/features/authentification/domain/entities/user_model/user_model.dart';
@@ -40,7 +41,8 @@ class LoginPage extends StatelessWidget {
         //Affichage du message
         showCustomSuccess(message: state.message);
         //Redirection
-        context.go('/home');
+        //context.go('/index',extra: {'index':0,});
+        context.go(homePath);
         //Fermeture de dialog
         EasyLoading.dismiss();
       }

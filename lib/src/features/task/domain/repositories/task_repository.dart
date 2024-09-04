@@ -17,4 +17,6 @@ abstract class TaskRepository {
     Future<bool> checkTaskTitleLocal(TaskModel task);
 
     Future<int> getTotalTasksLocal();
+
+    Future<TaskModel?> getTaskByIdRemote(TaskModel task);
 }

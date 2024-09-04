@@ -8,6 +8,6 @@ const double paddingPagesApp=19;
 const double roundedButton=10;
 const double buttonHeight=50;
 
-const double marginVerticalCard=6;
+const double marginVerticalCard=8;
 const double radiusTaskCard=8;
 const double roundedFilterOptions=10;

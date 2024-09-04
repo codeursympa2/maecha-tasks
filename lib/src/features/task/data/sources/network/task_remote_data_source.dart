@@ -38,7 +38,16 @@ class TaskRemoteDataSource {
         .doc(task.user!.uid) // Document pour l'utilisateur spécifique
         .collection(secondCollectionPath) // Sous-collection pour les tâches de l'utilisateur
         .doc(task.id)// Ajouter la tâche avec un identifiant généré automatiquement  }
-        .update(task.toJson());
+        .update({
+          'title': task.title,
+          'desc': task.desc,
+          'dateTime': task.dateTime!.toIso8601String(), // Convertir DateTime en String
+          'priority': task.priority!.name, // Convertir enum en String, ajuster selon votre implémentation
+          'user': task.user!.toJson(),
+          'done': task.done,
+          'notify':task.notify,
+          'createdAt': FieldValue.serverTimestamp()
+        });
   }
 
   Future<void> deleteTask(TaskModel task) async {
@@ -77,5 +86,28 @@ class TaskRemoteDataSource {
         .get();
     //on renvoie le résultat
     return querySnapshot.docs.isNotEmpty;
+  }
+
+  Future<TaskModel?> getTaskWithId(String uid,String id)async{
+    final collectionReference = db
+        .collection(collectionPath) // Collection principale
+        .doc(uid) // Document pour l'utilisateur spécifique
+        .collection(secondCollectionPath); // Sous-collection pour les tâches de l'utilisateur
+
+    // Requête pour rechercher la tâche avec l'id spécifié
+    final querySnapshot = await collectionReference
+        .where('id', isEqualTo: id)
+        .limit(1)
+        .get();
+
+    // Vérification si le document existe
+    if (querySnapshot.docs.isNotEmpty) {
+      // Conversion du document en TaskModel
+      final taskDocument = querySnapshot.docs.first;
+      return TaskModel.fromJson(taskDocument.data()).copyWith(id:taskDocument.id);
+    } else {
+      // Retourner null si aucun document n'a été trouvé
+      return null;
+    }
   }
 }

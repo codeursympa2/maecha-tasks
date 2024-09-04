@@ -1,18 +1,21 @@
 import 'dart:async';
 import 'dart:math';
-
+import 'package:maecha_tasks/routes/app_router.dart';
 import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
-import 'package:maecha_tasks/src/features/task/presentation/bloc/bottom_nav_bloc/bottom_nav_bar_bloc.dart';
-import 'package:maecha_tasks/src/features/task/presentation/utils/utils.dart';
+import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
+import 'package:maecha_tasks/src/constants/strings/paths.dart';
+import 'package:maecha_tasks/src/features/task/presentation/pages/partials/task_card.dart';
+import 'package:maecha_tasks/src/utils/easy_loading_messages.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
-import 'package:maecha_tasks/src/features/task/presentation/pages/item/task_card.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 import '../../domain/entities/task/task_model.dart';
@@ -30,14 +33,14 @@ class ListTasksPage extends StatelessWidget {
   }
 }
 
-class ListTasks extends StatefulWidget {
+class ListTasks extends StatefulWidget  {
   const ListTasks({super.key});
 
   @override
   State<ListTasks> createState() => _ListTasksState();
 }
 
-class _ListTasksState extends State<ListTasks> {
+class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMixin {
   //
   List<TaskModel> listTasks=[];
   List<TaskModel> defaultListTasks=[];
@@ -62,6 +65,9 @@ class _ListTasksState extends State<ListTasks> {
     'Mois passé',
     'Mois prochain',
   ];
+  //Slidable
+  late final controller = SlidableController(this);
+
 
   @override
   void initState() {
@@ -73,7 +79,6 @@ class _ListTasksState extends State<ListTasks> {
 
   @override
   Widget build(BuildContext context) {
-
 
     return Scaffold(
       key: _scaffoldKey,
@@ -100,12 +105,25 @@ class _ListTasksState extends State<ListTasks> {
                 listTasks=state.taskList;
               });
             }
+
+            //Pour la suppression
+            if(state is TaskLoadingState){
+              showCustomMessage(message: waiting);
+            }
+            if(state is TaskDeleteSuccessState){
+              showCustomSuccess(message: state.message);
+            }
+
+            if(state is TaskDeleteFailureState){
+              showCustomError(message: state.message);
+            }
+
           },
         ),
       ],
       child: BlocBuilder<TaskBloc,TaskState>(
         builder: (context,state){
-          if(state is TaskLoadingState){
+          if(state is TaskLoadingShimmerState){
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: paddingPagesApp,vertical: 5),
               child: Column(
@@ -143,7 +161,7 @@ class _ListTasksState extends State<ListTasks> {
                     width: 90,
                     child: ElevatedButton(
                         onPressed: (){
-                          BlocProvider.of<BottomNavBarBloc>(context).add(const GoToPageEvent(pathName: 'task'));
+                          context.go(taskAddPath);
                         },
                         child: const Text("Créer"),
                     ),
@@ -243,7 +261,38 @@ class _ListTasksState extends State<ListTasks> {
                   child: listTasks.isNotEmpty ? ListView.builder(
                     itemCount: listTasks.length,
                     itemBuilder: (context, index) {
-                      return TaskCard(task: listTasks[index]);
+                      TaskModel currentTask=listTasks[index];
+                      return Column(
+                        children: [
+                          BlocBuilder<ConnectivityCheckerBloc,ConnectivityCheckerState>(
+                              builder: (BuildContext context, ConnectivityCheckerState state) {
+                                //En cas de connexion
+                                if(state is ConnectionInternetState){
+                                  return Slidable(
+                                      key: const ValueKey(0),
+                                      startActionPane: actionTask(currentTask),
+                                      endActionPane: actionTask(currentTask),
+                                      closeOnScroll: true,
+                                      child: GestureDetector(
+                                          onTap: (){
+                                            //Aller à la partie detail
+                                            context.go("$listTaskPath/$detailsTaskPath",extra: currentTask);
+                                          },
+                                          child: _taskCard(currentTask)
+                                      )
+                                  );
+                                }
+                                //en absence de la copnnexion pas suppression ni partage
+                                else if(state is NoConnectionInternetState){
+                                  return _taskCard(currentTask);
+                                }else{
+                                  return const Gap(0);
+                                }
+                              },
+                          ),
+                          const Gap(marginVerticalCard+5),
+                        ],
+                      );
                     },
                   ):const Center(child: Text("Pas de tâches pour ce filtre."),),
                 ),
@@ -280,5 +329,50 @@ class _ListTasksState extends State<ListTasks> {
       shimmerObj,
       shimmerObj,
     ],);
+  }
+
+  void _deleteTask(TaskModel task) {
+    BlocProvider.of<TaskBloc>(context).add(DeleteTaskRemoteEvent(task: task));
+  }
+
+  ActionPane actionTask(TaskModel currentTask){
+    return ActionPane(
+      // A motion is a widget used to control how the pane animates.
+      motion: const ScrollMotion(),
+      //dismissible: DismissiblePane(onDismissed: () {}),
+      children:[
+        const Gap(4),
+        // A SlidableAction can have an icon and/or a label.
+        SlidableAction(
+          onPressed: (context){
+            _deleteTask(currentTask);
+          },
+          backgroundColor: dangerLight,
+          foregroundColor: backgroundLight,
+          spacing: 10,
+          borderRadius: const BorderRadius.all(Radius.circular(radiusTaskCard)),
+          icon: Icons.delete,
+        ),
+        const Gap(2),
+        SlidableAction(
+          onPressed: (context){
+
+          },
+          borderRadius: const BorderRadius.all(Radius.circular(radiusTaskCard)),
+          backgroundColor: infoColorLight,
+          foregroundColor: backgroundLight,
+          icon: Icons.share,
+        ),
+        const Gap(4),
+      ],
+    );
+  }
+
+  Widget _taskCard(TaskModel task) {
+    return TaskCard(
+      task: task,
+      onTapOptions: (){
+        //En cliquant sur les 3 points
+      },);
   }
 }

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:injectable/injectable.dart';
 import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
@@ -14,6 +16,7 @@ import 'package:maecha_tasks/src/features/task/application/usecases/local/get_to
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/add_task.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/check_task_title.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/delete_task.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/remote/get_task_by_id.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/get_tasks.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/update_tasks.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
@@ -22,6 +25,7 @@ import 'package:maecha_tasks/src/features/task/presentation/utils/utils.dart';
 part 'task_event.dart';
 part 'task_state.dart';
 
+@lazySingleton
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   //remote
   final AddTask addTask;
@@ -29,6 +33,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final GetTasks getTasks;
   final UpdateTasks updateTask;
   final CheckTaskTitle checkTaskTitle;
+  final GetTaskById getTaskById;
   //local
   final CheckTaskTitleLocal checkTaskTitleLocal;
   final AddTaskLocal addTaskLocal;
@@ -40,6 +45,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   //
   final ConnectivityCheckerBloc connCheckerBloc;
+
+
 
   TaskBloc(
       {
@@ -54,8 +61,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       required this.getTasksLocal,
       required this.deleteAllTasksLocal,
       required this.local,
-      required this.connCheckerBloc
+      required this.connCheckerBloc,
+      required this.getTaskById
       }) : super(const TaskInitialState()) {
+
+
+
     on<TaskInitialEvent>((event, emit) {
       emit(const TaskInitialState());
     });
@@ -64,7 +75,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<CreateTaskRemoteEvent>((event,emit)async{
       emit(const TaskLoadingState());
       try{
-        if(await _checkTitleRemote(event.task)){
+        if(!(await _checkTitleRemote(event.task))){
           await _createTaskRemote(event.task).whenComplete(()=> emit(const TaskCreateSuccessState(message: taskAdded)));
         }else{
           emit(const TitleExistState(message: titleExist));
@@ -107,8 +118,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
          int doub=0;
          //On parcours la liste et ajoute 1 à 1 à cloudFirestore
          for(var task in localData){
-           //Si nous n'avons t pa
-           if(await _checkTitleRemote(task)){
+           //Si nous n'avons pas ce titre en remote
+           if(!(await _checkTitleRemote(task))){
              await _createTaskRemote(task.copyWith(user:local.getUser()));
            }else{
              doub++;
@@ -131,7 +142,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     });
 
     on<GetTasksEvent>((event,emit) async{
-      emit(const TaskLoadingState());
+      emit(const TaskLoadingShimmerState());
       try{
         List<TaskModel> list = [];
 
@@ -140,7 +151,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
         if (currentState is ConnectionInternetState) {
           // Connexion Internet disponible
-          list = await getTasks.call(TaskModel.getTasks(user: local.getUser()));
+          list = await _getTasksWithoutShimmerLoader();
         } else if (currentState is NoConnectionInternetState) {
           // Pas de connexion, récupérer les tâches localement
           await Future.delayed(const Duration(seconds: 2),() async {
@@ -199,6 +210,58 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
     });
 
+    on<DeleteTaskRemoteEvent>((event,emit)async{
+      emit(const TaskLoadingState());
+
+      try{
+        await deleteTask.call(event.task).whenComplete(()async{
+          //on emet
+          emit(const TaskDeleteSuccessState(message: taskDeleted));
+          //Et on recharge la liste
+          List<TaskModel> list =await _getTasksWithoutShimmerLoader();
+
+          if(list.isNotEmpty){
+            emit(TaskLoadedState(taskList: list));
+          }else{
+            emit(const EmptyListTasksState());
+            //Fermeture de dialog
+            EasyLoading.dismiss();
+          }
+        });
+      }catch(e){
+        emit( TaskDeleteFailureState(message: "$failureDeleteTask \n: $e"));
+      }
+    });
+
+
+    on<GetTaskEditEvent>((event,emit)async{
+      try{
+        TaskModel? task= await getTaskById.call(TaskModel.geTaskById(user: local.getUser(), id: event.idTask));
+        emit(GetTaskEditState(task: task));
+      }catch(e){
+        emit(TaskFailureState(message: '$e'));
+      }
+    });
+
+    on<UpdateTaskEvent>((event,emit)async{
+      emit(const TaskLoadingState());
+
+      try{
+        //On recherche cette tâche par l'id pour comparer la valeur stocké et la nouvelle
+        TaskModel? taskSearch= await getTaskById.call(TaskModel.geTaskById(user: local.getUser(), id: event.task.id));
+
+        if((taskSearch!.title! != event.task.title) &&  await _checkTitleRemote(event.task)){ //Vérification si le titre n'existe pas
+          emit(const TitleExistState(message: titleExist));
+        }else{
+          UserModel user=local.getUser()!;
+          await updateTask.call(event.task.copyWith(user: user)).whenComplete(()=> emit(const TaskCreateSuccessState(message: taskUpdated)));
+        }
+      }catch(e){
+        print(e);
+        emit( TaskFailureState(message: "$failureUpdateTask \n: $e"));
+      }
+    });
+
   }
 
 
@@ -210,6 +273,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<bool> _checkTitleRemote(TaskModel task)async{
-    return !(await checkTaskTitle.call(TaskModel.getTitle(title: task.title, user: local.getUser(),)));
+    return (await checkTaskTitle.call(TaskModel.getTitle(title: task.title, user: local.getUser(),)));
   }
+
+  Future<List<TaskModel>> _getTasksWithoutShimmerLoader()async{
+    return await getTasks.call(TaskModel.getTasks(user: local.getUser()));
+  }
+
+
 }
