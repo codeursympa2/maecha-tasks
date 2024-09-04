@@ -4,31 +4,44 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
+import 'package:maecha_tasks/src/constants/strings/paths.dart';
 import 'package:maecha_tasks/src/constants/strings/strings.dart';
 import 'package:maecha_tasks/src/constants/theme/light/theme_light.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
 import 'package:maecha_tasks/src/features/task/domain/value_objects/task_priority.dart';
-import 'package:maecha_tasks/src/features/task/presentation/bloc/bottom_nav_bloc/bottom_nav_bar_bloc.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
 import 'package:maecha_tasks/src/features/task/presentation/utils/utils.dart';
 import 'package:maecha_tasks/src/features/task/presentation/widgets/form_widgets.dart';
 import 'package:maecha_tasks/src/utils/easy_loading_messages.dart';
 
-class TaskPage extends StatelessWidget {
+class TaskPage extends StatefulWidget {
   final TaskModel? task;
 
   const TaskPage({super.key, this.task});
 
+  @override
+  State<TaskPage> createState() => _TaskPageState();
+}
 
+class _TaskPageState extends State<TaskPage> {
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<TaskBloc>(context).add(const GetTaskModifyEvent());
-
     return Scaffold(
+      appBar:  widget.task != null ? AppBar(
+        backgroundColor: backgroundLight,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: primaryTextLight),  // Icône personnalisée
+          onPressed: () {
+            BlocProvider.of<TaskBloc>(context).add(const GetTasksEvent());
+            context.go(listTaskPath);
+          },
+        ),
+      ):null,
       body: MultiBlocListener(
         listeners: [
           BlocListener<TaskBloc, TaskState>(
@@ -39,8 +52,8 @@ class TaskPage extends StatelessWidget {
 
               if (state is TaskCreateSuccessState) {
                 showCustomSuccess(message: state.message);
-                BlocProvider.of<BottomNavBarBloc>(context).add(
-                    const GoToPageEvent(pathName: "task-list"));
+                context.go(listTaskPath);
+                BlocProvider.of<TaskBloc>(context).add(const GetTasksEvent());
               }
 
               if (state is TitleExistState) {
@@ -59,19 +72,23 @@ class TaskPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(createTask,
+                Text(widget.task != null ? updateTask : createTask,
                     style: Theme.of(context).textTheme.displayLarge),
                 const Gap(16),
                 Text(descCreateTask,
                     style: Theme.of(context).textTheme.titleMedium),
                 const Gap(16),
-                _TaskForm(task: task)
+                _TaskForm(task: widget.task,)
               ],
             ),
           ),
         ),
       ),
     );
+  }
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
 
@@ -110,16 +127,33 @@ class _TaskFormState extends State<_TaskForm> {
   //
   bool _notificationsEnabled = false;
   //
+  DateTime _initialValueDate=DateTime.now();
+
+  //
+  String _initialValueColor=lowValue;
+
+  String _priorityChanged=lowValue;
+
+
+  late TaskModel taskRecover;
 
   @override
   void initState() {
      super.initState();
-
+     //id != null ? BlocProvider.of<TaskBloc>(context).add(GetTaskEditEvent(idTask: id!)) :null;
      if(widget.task != null){
-       _titleController.text=widget.task!.title!;
-       _descController.text=widget.task!.desc!;
-       _notificationsEnabled=widget.task!.notify!;
+       setState(() {
+         taskRecover = widget.task!;
+         _titleController.text = taskRecover.title!;
+         _descController.text = taskRecover.desc!;
+         _notificationsEnabled = taskRecover.notify!;
+         _initialValueDate = taskRecover.dateTime!;
+         _initialValueColor = _getValueColorInFrench(taskRecover.priority!.name);
 
+         // Mettre à jour les contrôleurs de date et d'heure
+         _dateController.text = DateFormat('yyyy-MM-dd').format(_initialValueDate);
+         _hourController.text = DateFormat('HH:mm').format(_initialValueDate);
+       });
      }
   }
 
@@ -131,45 +165,45 @@ class _TaskFormState extends State<_TaskForm> {
   @override
   Widget build(BuildContext context) {
     return FormBuilder(
-        key: _formKey,
-        child: Column(
-          children: [
-            _buildTitleField(),
-            const Gap(16),
-            Row(children: [
-              Expanded(child: _buildDateField()),
-              const Gap(4),
-              Expanded(child: _buildHourField()),
-            ],),
-            const Gap(16),
-            _buildDescField(),
-            const Gap(16),
-            _buildColorChoice(),
-            const Gap(16),
-            SwitchListTile(
-              tileColor: backgroundLight,
-              activeColor: primaryLight,
-              contentPadding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-              title: Text("Activer les notifications pour cette tâche",style: Theme.of(context).textTheme.labelSmall,),
-              value: _notificationsEnabled,
-              onChanged:_onChangedNotifyValue,
-            ),
-            const Gap(16),
-            BlocBuilder<ConnectivityCheckerBloc, ConnectivityCheckerState>(
-              builder: (context, state) {
-                return ElevatedButton(
-              onPressed: (){
-                if((_formKey.currentState?.saveAndValidate() ?? false)){
-                  _logicToCreate(state);
-                }
-              },
-              child: const Text('Créer'),
-            );
-  },
-),
-          ],
+          key: _formKey,
+          child: Column(
+            children: [
+              _buildTitleField(),
+              const Gap(16),
+              Row(children: [
+                Expanded(child: _buildDateField()),
+                const Gap(4),
+                Expanded(child: _buildHourField()),
+              ],),
+              const Gap(16),
+              _buildDescField(),
+              const Gap(16),
+              _buildColorChoice(),
+              const Gap(16),
+              SwitchListTile(
+                tileColor: backgroundLight,
+                activeColor: primaryLight,
+                contentPadding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                title: Text("Activer les notifications pour cette tâche",style: Theme.of(context).textTheme.labelSmall,),
+                value: _notificationsEnabled,
+                onChanged:_onChangedNotifyValue,
+              ),
+              const Gap(16),
+              BlocBuilder<ConnectivityCheckerBloc, ConnectivityCheckerState>(
+                builder: (context, state) {
+                  return ElevatedButton(
+                onPressed: (){
+                  if((_formKey.currentState?.saveAndValidate() ?? false)){
+                    _logicToSave(state);
+                  }
+                },
+                child: Text(widget.task != null ? "Editer":'Créer'),
+              );
+    },
         ),
-      );
+            ],
+          ),
+        );
 
   }
 
@@ -211,6 +245,7 @@ class _TaskFormState extends State<_TaskForm> {
       focusNode: _dateFocusNode,
       initialEntryMode: DatePickerEntryMode.calendar,
       inputType: InputType.date,
+      initialValue: _initialValueDate,
       decoration: const InputDecoration(
         labelText: 'Date',
       ),
@@ -225,6 +260,7 @@ class _TaskFormState extends State<_TaskForm> {
       controller: _hourController,
       initialEntryMode: DatePickerEntryMode.calendar,
       inputType: InputType.time,
+      initialValue: _initialValueDate,
       focusNode: _hourFocusNode,
       decoration: const InputDecoration(
         labelText: 'Heure',
@@ -235,7 +271,6 @@ class _TaskFormState extends State<_TaskForm> {
     );
   }
   Widget _buildColorChoice(){
-    const double iconSize=13;
     return  FormBuilderChoiceChip<String>(
       autovalidateMode: AutovalidateMode.onUserInteraction,
       backgroundColor: backgroundLight,
@@ -250,10 +285,10 @@ class _TaskFormState extends State<_TaskForm> {
       validator: FormBuilderValidators.compose([
         requiredFieldForm()
       ]),
-      initialValue: lowValue,
+      initialValue: _initialValueColor,
       options: const [
         FormBuilderChipOption(
-          value: lowValue,
+          value:  lowValue,
           avatar: CircleAvatar(
             backgroundColor: lowPriorityColor,
           ),
@@ -275,39 +310,53 @@ class _TaskFormState extends State<_TaskForm> {
     );
   }
 
-  void _onChanged(dynamic val) => debugPrint(val.toString());
+  void _onChanged(dynamic val) => setState(() {
+    _priorityChanged= val.toString();
+  });
 
   TaskPriority _convertFormValuePriority(String value){
     late TaskPriority vl;
     switch(value){
       case lowValue:
         vl=TaskPriority.low;
+        break;
       case highValue :
         vl=TaskPriority.high;
+        break;
       case mediumValue :
-      vl=TaskPriority.medium;
+       vl=TaskPriority.medium;
+       break;
     }
 
     return vl;
   }
 
-  _logicToCreate(ConnectivityCheckerState state) {
+  _logicToSave(ConnectivityCheckerState state) {
     final formValues=_formKey.currentState?.value;
 
     TaskModel task=TaskModel.addTask(
         title: formValues!['title'],
         desc: formValues['desc'],
         dateTime: combineDateAndTime(formValues['date'].toString(), formValues['hour'].toString()),
-        priority: _convertFormValuePriority(formValues['priority'].toString()),
+        priority: _convertFormValuePriority(_priorityChanged),
         notify: _notificationsEnabled,
         done: false
     );
     //en cas de connection
     if(state is ConnectionInternetState){
-      BlocProvider.of<TaskBloc>(context).add(CreateTaskRemoteEvent(task: task));
+      if(widget.task != null){
+        //Ajout de l'id
+        TaskModel updatedTask= task.copyWith(id: taskRecover.id!);
+        //Mise à jour
+        BlocProvider.of<TaskBloc>(context).add(UpdateTaskEvent(task: updatedTask));
+      }else{
+        //Création
+        BlocProvider.of<TaskBloc>(context).add(CreateTaskRemoteEvent(task: task));
+      }
     }
     //Pas de connexion
     if(state is NoConnectionInternetState){
+      //Création en local
       BlocProvider.of<TaskBloc>(context).add(CreateTaskLocaleEvent(task: task));
     }
   }
@@ -326,6 +375,18 @@ class _TaskFormState extends State<_TaskForm> {
     _choiceFocusNode.dispose();
     super.dispose();
   }
+
+ String _getValueColorInFrench(String frenchValue){
+    switch(frenchValue){
+      case "low":
+        return lowValue;
+      case  "medium":
+        return mediumValue;
+      default:
+        return highValue;
+    }
+ }
+
 
 
 

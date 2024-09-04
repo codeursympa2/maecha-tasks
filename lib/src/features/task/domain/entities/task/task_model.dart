@@ -58,6 +58,18 @@ class TaskModel extends Equatable{
         this.notify
       });
 
+  const TaskModel.geTaskById({
+    required this.user,
+    required this.id,
+    this.title,
+    this.desc,
+    this.dateTime,
+    this.priority,
+    this.done,
+    this.notify
+
+  });
+
   factory TaskModel.fromJson(Map<String,dynamic> json) => _$TaskModelFromJson(json);
   Map<String,dynamic> toJson() => _$TaskModelToJson(this);
 

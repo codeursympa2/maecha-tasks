@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:math';
-
+import 'package:maecha_tasks/routes/app_router.dart';
 import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,8 +10,8 @@ import 'package:go_router/go_router.dart';
 import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
-import 'package:maecha_tasks/src/features/task/presentation/bloc/bottom_nav_bloc/bottom_nav_bar_bloc.dart';
-import 'package:maecha_tasks/src/features/task/presentation/pages/items/task_card.dart';
+import 'package:maecha_tasks/src/constants/strings/paths.dart';
+import 'package:maecha_tasks/src/features/task/presentation/pages/partials/task_card.dart';
 import 'package:maecha_tasks/src/utils/easy_loading_messages.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:maecha_tasks/src/constants/numbers.dart';
@@ -33,7 +33,7 @@ class ListTasksPage extends StatelessWidget {
   }
 }
 
-class ListTasks extends StatefulWidget {
+class ListTasks extends StatefulWidget  {
   const ListTasks({super.key});
 
   @override
@@ -161,7 +161,7 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
                     width: 90,
                     child: ElevatedButton(
                         onPressed: (){
-                          BlocProvider.of<BottomNavBarBloc>(context).add(const GoToPageEvent(pathName: 'task'));
+                          context.go(taskAddPath);
                         },
                         child: const Text("Créer"),
                     ),
@@ -276,7 +276,7 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
                                       child: GestureDetector(
                                           onTap: (){
                                             //Aller à la partie detail
-                                            context.go("/detail-task",extra: currentTask);
+                                            context.go("$listTaskPath/$detailsTaskPath",extra: currentTask);
                                           },
                                           child: _taskCard(currentTask)
                                       )

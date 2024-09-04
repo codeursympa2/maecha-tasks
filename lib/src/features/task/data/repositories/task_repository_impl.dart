@@ -66,4 +66,9 @@ class TaskRepositoryImpl implements TaskRepository{
   Future<void> deleteAllTaskLocal()async {
     localDataSource.deleteAllTasks();
   }
+
+  @override
+  Future<TaskModel?> getTaskByIdRemote(TaskModel task)async {
+    return await remoteDataSource.getTaskWithId(task.user!.uid!, task.id!);
+  }
 }

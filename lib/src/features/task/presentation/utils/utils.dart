@@ -23,6 +23,18 @@ DateTime combineDateAndTime(String dateString, String hourString) {
   return combinedDateTime;
 }
 
+Map<String, String> splitDateTime(DateTime dateTime) {
+  // Extraire la date et l'heure sous forme de chaînes
+  String dateString = "${dateTime.year.toString().padLeft(4, '0')}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
+  String hourString = "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
+
+  // Retourner la Map contenant la date et l'heure
+  return {
+    "date": dateString,
+    "time": hourString,
+  };
+}
+
 List<TaskModel>? filterTasks(List<TaskModel> tasks, int filterOption) {
   if (filterOption == -1) {
     return tasks;

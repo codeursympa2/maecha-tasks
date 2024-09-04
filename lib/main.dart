@@ -22,10 +22,10 @@ import 'package:maecha_tasks/src/features/task/application/usecases/local/get_to
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/add_task.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/check_task_title.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/delete_task.dart';
+import 'package:maecha_tasks/src/features/task/application/usecases/remote/get_task_by_id.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/get_tasks.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/update_tasks.dart';
 import 'package:maecha_tasks/src/features/task/data/sources/local/database_manager.dart';
-import 'package:maecha_tasks/src/features/task/presentation/bloc/bottom_nav_bloc/bottom_nav_bar_bloc.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
 
 Future<void> main() async {
@@ -58,8 +58,6 @@ class MyApp extends StatelessWidget {
 
         //Auth form
         BlocProvider<AuthFormBloc>(create: (context) => AuthFormBloc()),
-        //Bottom nav bloc
-        BlocProvider<BottomNavBarBloc>(create: (context) => BottomNavBarBloc(taskBloc: getIt<TaskBloc>())),
         //Task
         BlocProvider<TaskBloc>(create: (context)=> TaskBloc(
             addTask:  getIt<AddTask>(),
@@ -73,14 +71,15 @@ class MyApp extends StatelessWidget {
             deleteAllTasksLocal: getIt<DeleteAllTasksLocal>(),
             getTasksLocal: getIt<GetTasksLocal>(),
             getTotalTasksLocal: getIt<GetTotalTasksLocal>(),
-            connCheckerBloc: getIt<ConnectivityCheckerBloc>()
+            connCheckerBloc: getIt<ConnectivityCheckerBloc>(),
+            getTaskById: getIt<GetTaskById>()
         ))
       ],
       child: Builder(
         builder: (context) {
           return MaterialApp.router(
             title: appName,
-            routerConfig: AppRouter.router(context),
+            routerConfig: AppRouter().router(context),
             debugShowCheckedModeBanner: false,
             builder: EasyLoading.init(),
             theme: ThemeData(

@@ -22,11 +22,14 @@ const String waiting="Veillez patienter...";
 
 //Task
 const String  createTask="Création d’une tâche";
+const String  updateTask="Mise à jour  d’une tâche";
 const String descCreateTask="Bienvenue sur la page de création de tâche ! Ajoutez facilement et rapidement vos nouvelles tâches, définissez leurs priorités, et restez organisé pour atteindre vos objectifs avec efficacité.";
 const String failureAddTask="Echec de l'ajout de la tâche";
+const String failureUpdateTask="Echec de la modification de la tâche";
 const String failureDeleteTask="Echec de la suppression de la tâche";
 const String titleExist="Ce titre existe dejà.";
 const String taskAdded="Tâche ajoutée";
+const String taskUpdated="Tâche modifiée";
 const String taskDeleted="Tâche supprimée";
 
 const String failedLoadList="Echec du chargement de la liste.";

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:maecha_tasks/global/injectable/injectable.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
+import 'package:maecha_tasks/src/constants/strings/paths.dart';
 
 import 'package:maecha_tasks/src/features/authentification/presentation/bloc/auth/auth_bloc.dart';
 
@@ -32,11 +33,11 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if(state is AuthAuthenticatedState){
-          context.go('/index',extra: {'index':0,});
+          context.go(homePath);
         }
 
         if(state is AuthUnauthenticatedState){
-          context.go("/main");        }
+          context.go(mainPath);        }
       },
       child: const Center(child: CircularProgressIndicator()),
     );
