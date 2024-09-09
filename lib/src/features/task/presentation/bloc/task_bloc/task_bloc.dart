@@ -262,6 +262,17 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       }
     });
 
+    on<LoadTasksDashboard>((event,emit)async{
+      emit(const HomeDashLoadingState());
+      try{
+        List<TaskModel> list = await _getTasksWithoutShimmerLoader();
+        emit(HomeDashLoadedState(list: list));
+      }catch(e){
+        print(e);
+        emit(const TaskFailureState(message: failedLoadList));
+      }
+    });
+
   }
 
 

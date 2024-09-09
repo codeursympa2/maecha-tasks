@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:maecha_tasks/routes/app_router.dart';
 import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,9 +10,10 @@ import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
 import 'package:maecha_tasks/src/constants/strings/paths.dart';
+import 'package:maecha_tasks/src/features/task/presentation/pages/partials/shimmer_card.dart';
 import 'package:maecha_tasks/src/features/task/presentation/pages/partials/task_card.dart';
+import 'package:maecha_tasks/src/features/task/presentation/utils/utils.dart';
 import 'package:maecha_tasks/src/utils/easy_loading_messages.dart';
-import 'package:shimmer_animation/shimmer_animation.dart';
 import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
 import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
@@ -124,9 +124,10 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
       child: BlocBuilder<TaskBloc,TaskState>(
         builder: (context,state){
           if(state is TaskLoadingShimmerState){
-            return Container(
+            return Padding(
               padding: const EdgeInsets.symmetric(horizontal: paddingPagesApp,vertical: 5),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Gap(8),
                   SingleChildScrollView(
@@ -135,11 +136,7 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
                   ),
                   const Gap(10),
                   Expanded(
-                    child: ListView.builder(
-                        itemCount: 8,
-                        itemBuilder: (context,index){
-                          return _shimmer(marginVertical: marginVerticalCard,width: double.infinity,height: 100,radius: radiusTaskCard);
-                        }),
+                    child: shimmerTaskCard(itemCount: 8)
                   ),
                 ],
               ),
@@ -185,32 +182,7 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
     BlocProvider.of<TaskBloc>(context).add(const GetTasksEvent());
   }
 
-  Widget _shimmer({required double width, required double height, required double radius,double marginVertical=0,double marginHorz=0}){
-    return Shimmer(
-      // This is the ONLY required parameter
-      duration: const Duration(seconds: 1),
-      // This is NOT the default value. Default value: Duration(seconds: 0)
-      interval: const Duration(seconds: 1),
-      // This is the default value
-      color: Colors.black12,
-      // This is the default value
-      colorOpacity: 0.2,
-      // This is the default value
-      enabled: true,
-      // This is the default value
-      direction: const ShimmerDirection.fromLTRB(),
-      // This is the ONLY required parameter
-      child: Container(
-        decoration: BoxDecoration(
-          color: skeletonColorLight,
-          borderRadius: BorderRadius.all(Radius.circular(radius)),
-        ),
-        width: width,
-        height: height,
-        margin: EdgeInsets.symmetric(vertical: marginVertical,horizontal: marginHorz),
-      ),
-    );
-  }
+
 
   Widget _contentList(){
     return LiquidPullToRefresh(
@@ -322,8 +294,8 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
   }
 
   Widget _shimmerFilterOptions(){
-    final shimmerObj=_shimmer(width: 120, height: 28, radius: roundedFilterOptions,marginHorz: 8);
-    return Row(children: [
+    const shimmerObj=ShimmerCard(width: 120, height: 28, radius: roundedFilterOptions,marginHorz: 8);
+    return const Row(children: [
       shimmerObj,
       shimmerObj,
       shimmerObj,
@@ -347,7 +319,7 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
           onPressed: (context){
             _deleteTask(currentTask);
           },
-          backgroundColor: dangerLight,
+          backgroundColor: primaryLight,
           foregroundColor: backgroundLight,
           spacing: 10,
           borderRadius: const BorderRadius.all(Radius.circular(radiusTaskCard)),
@@ -359,7 +331,7 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
 
           },
           borderRadius: const BorderRadius.all(Radius.circular(radiusTaskCard)),
-          backgroundColor: infoColorLight,
+          backgroundColor: primaryLight,
           foregroundColor: backgroundLight,
           icon: Icons.share,
         ),

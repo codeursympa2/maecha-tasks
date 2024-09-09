@@ -111,3 +111,17 @@ final class GetTaskEditState extends TaskState{
 }
 
 
+final class HomeDashLoadingState extends TaskState{
+  const HomeDashLoadingState();
+}
+
+class HomeDashLoadedState extends TaskState{
+  final List<TaskModel> list;
+
+  const HomeDashLoadedState({required this.list});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [list];
+}
+

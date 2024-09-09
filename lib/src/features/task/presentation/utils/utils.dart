@@ -1,5 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
+import 'package:maecha_tasks/src/features/task/domain/value_objects/dash_task_filter_options.dart';
+import 'package:maecha_tasks/src/features/task/domain/value_objects/filter_total_list.dart';
+import 'package:maecha_tasks/src/features/task/domain/value_objects/task_priority.dart';
+import 'package:maecha_tasks/src/features/task/presentation/pages/partials/shimmer_card.dart';
 
 String? Function(dynamic) requiredFieldForm(){
   return FormBuilderValidators.required(errorText: 'Ce champ est obligatoire');
@@ -76,6 +82,93 @@ bool isSameDay(DateTime date1, DateTime date2) {
 
 bool isSameMonth(DateTime date1, DateTime date2) {
   return date1.year == date2.year && date1.month == date2.month;
+}
+
+
+int getTotalWithFilter(List<TaskModel> list,FilterTotalList choice){
+  List<TaskModel> done= list.where((task) => task.done == true).toList();
+  List<TaskModel> todo= list.where((task) => task.done == false).toList();
+  List<TaskModel> favorites= list.where((task) => task.favorite == true).toList();
+
+  if(choice == FilterTotalList.done){
+    return done.length;
+  }else if(choice == FilterTotalList.todo){
+    return todo.length;
+  }else if(choice == FilterTotalList.favorite){
+    return favorites.length;
+  }
+  else{
+    return list.length;
+  }
+}
+
+List<TaskModel> getDashTasksWithFilter(
+    {
+    required DashTaskFilterOptions filter,
+    required List<TaskModel> tasks,
+    }){
+  // Obtenir la date et l'heure actuelle
+  final now = DateTime.now();
+
+  // Trier et filtrer les tâches selon le filtre sélectionné
+  List<TaskModel> filteredTasks;
+
+  switch(filter){
+    //Aujourd'hui
+    case DashTaskFilterOptions.today:
+      filteredTasks = tasks.where((task) {
+        return task.dateTime != null &&
+            task.dateTime!.year == now.year &&
+            task.dateTime!.month == now.month &&
+            task.dateTime!.day == now.day;
+      }).toList();
+      break;
+    //48 heures
+    case DashTaskFilterOptions.recent:
+      final recentCutoff = now.subtract(const Duration(hours: 48));
+      filteredTasks = tasks.where((task) {
+        return task.createdAt != null && task.createdAt!.isAfter(recentCutoff);
+      }).toList();
+      break;
+
+    //Deux prochaines semaine A venir
+    case DashTaskFilterOptions.upcoming:
+      final twoWeeksFromNow = now.add(const Duration(days: 14));
+      filteredTasks = tasks.where((task) {
+        return task.dateTime != null &&
+            task.dateTime!.isAfter(now) &&
+            task.dateTime!.isBefore(twoWeeksFromNow);
+      }).toList();
+      break;
+    //Completés
+    case DashTaskFilterOptions.completed:
+      filteredTasks = tasks.where((task) => task.done == true).toList();
+      break;
+    //Priorité elevée
+    case DashTaskFilterOptions.priorityHigh:
+      filteredTasks = tasks.where((task) => task.priority == TaskPriority.high).toList();
+      break;
+    //Priorité moyenne
+    case DashTaskFilterOptions.priorityMedium:
+      filteredTasks = tasks.where((task) => task.priority == TaskPriority.medium).toList();
+      break;
+    //Priorité basse
+    case DashTaskFilterOptions.priorityLow:
+      filteredTasks = tasks.where((task) => task.priority == TaskPriority.low).toList();
+      break;
+    }
+
+  return filteredTasks;
+}
+
+Widget shimmerTaskCard({required int itemCount}){
+  return ListView.builder(
+      shrinkWrap: true,  // Important pour éviter le problème de contraintes
+      physics: const NeverScrollableScrollPhysics(),  // Désactive le scroll si tu es déjà dans une scrollable view
+      itemCount: itemCount,
+      itemBuilder: (context,index){
+        return const ShimmerCard(marginVertical: marginVerticalCard,width: double.infinity,height: 100,radius: radiusTaskCard);
+      });
 }
 
 

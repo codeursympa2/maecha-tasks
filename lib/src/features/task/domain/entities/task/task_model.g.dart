@@ -19,6 +19,13 @@ TaskModel _$TaskModelFromJson(Map<String, dynamic> json) => TaskModel(
       priority: $enumDecodeNullable(_$TaskPriorityEnumMap, json['priority']),
       notify: json['notify'] as bool?,
       done: json['done'] as bool?,
+      favorite: json['favorite'] as bool?,
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] == null
+          ? null
+          : DateTime.parse(json['updatedAt'] as String),
     );
 
 Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
@@ -30,6 +37,9 @@ Map<String, dynamic> _$TaskModelToJson(TaskModel instance) => <String, dynamic>{
       'user': instance.user,
       'notify': instance.notify,
       'done': instance.done,
+      'favorite': instance.favorite,
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
     };
 
 const _$TaskPriorityEnumMap = {

@@ -15,8 +15,22 @@ const TextTheme textTheme=TextTheme(
   labelLarge: TextStyle(
     fontFamily: quicksand,
     fontWeight: FontWeight.bold,
-    color: Colors.white,
+    color: backgroundLight,
     fontSize: headlineLargeSize
+  ),
+  //Quicksand 20 bold button
+  headlineSmall: TextStyle(
+      fontFamily: quicksand,
+      fontWeight: FontWeight.bold,
+      color:primaryLight,
+      fontSize: 17
+  ),
+  //Quicksand 20 bold button
+  bodyLarge: TextStyle(
+      fontFamily: quicksand,
+      fontWeight: FontWeight.bold,
+      color:primaryTextLight,
+      fontSize: 18
   ),
   //Quicksand 16 bold
   labelMedium: TextStyle(
@@ -75,6 +89,11 @@ const TextTheme textTheme=TextTheme(
  headlineMedium: TextStyle(
       fontFamily: quicksand,
       fontWeight: FontWeight.bold,
+      color: backgroundLight,
+      fontSize: labelMediumSize
+  ),
+  displaySmall: TextStyle(
+      fontFamily: quicksand,
       color: backgroundLight,
       fontSize: labelMediumSize
   ),

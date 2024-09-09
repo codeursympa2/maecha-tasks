@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:maecha_tasks/global/injectable/injectable.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
+import 'package:maecha_tasks/routes/go_router_refresh_stream.dart';
 import 'package:maecha_tasks/src/constants/strings/paths.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/pages/main_page.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/pages/splash_screen_page.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
+import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
 import 'package:maecha_tasks/src/features/task/presentation/pages/agenda_page.dart';
 import 'package:maecha_tasks/src/features/task/presentation/pages/detail_task_page.dart';
 import 'package:maecha_tasks/src/features/task/presentation/pages/home_page.dart';
@@ -15,7 +18,6 @@ import 'package:maecha_tasks/src/features/task/presentation/pages/task_page.dart
 import 'package:maecha_tasks/src/features/task/presentation/widgets/bottom_navigation_bar.dart';
 
 class AppRouter {
-
 
   Page getPage({
     required Widget child,
@@ -36,6 +38,7 @@ class AppRouter {
     final profileTabNavigatorKey = GlobalKey<NavigatorState>();
 
 
+
     return GoRouter(
       initialLocation: defaultPath,
       navigatorKey: rootNavigatorKey,
@@ -52,7 +55,7 @@ class AppRouter {
                   path: homePath,
                   pageBuilder: (context, GoRouterState state) {
                     return getPage(
-                      child: const HomePage(),
+                      child: HomePage(local: getIt<SharedPreferencesService>(),),
                       state: state,
                     );
                   },

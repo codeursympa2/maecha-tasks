@@ -81,3 +81,9 @@ class UpdateTaskEvent extends TaskEvent{
   // TODO: implement props
   List<Object?> get props => [task];
 }
+
+final class LoadTasksDashboard extends TaskEvent{
+  const LoadTasksDashboard();
+}
+
+

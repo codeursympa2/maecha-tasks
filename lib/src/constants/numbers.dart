@@ -11,3 +11,8 @@ const double buttonHeight=50;
 const double marginVerticalCard=8;
 const double radiusTaskCard=8;
 const double roundedFilterOptions=10;
+
+const double paddingDashCard=15;
+const double borderRadiusDashCard=10;
+const double widthDashCard=164;
+const double heightDashCard=75;

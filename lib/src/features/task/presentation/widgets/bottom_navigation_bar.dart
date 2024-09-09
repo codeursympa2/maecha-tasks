@@ -72,12 +72,17 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
           ),
         ),
         bottomNavigationBar: bottomNavigationBar(
-            context, widget.child.currentIndex, (index) {
-          widget.child.goBranch(
-            index,
-            initialLocation: index == widget.child.currentIndex,
-          );
-          setState(() {});
+            context:context,
+            selectedIndex: widget.child.currentIndex,
+            onItemTapped: (index) {
+              index == 0 ? BlocProvider.of<TaskBloc>(context).add(const LoadTasksDashboard()):null;
+              index == 3 ? BlocProvider.of<TaskBloc>(context).add(const GetTasksEvent()):null;
+
+              widget.child.goBranch(
+                index,
+                initialLocation: index == widget.child.currentIndex,
+              );
+              setState(() {});
         }),
       ),
     );
@@ -85,8 +90,8 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
 }
 
 
-BottomNavigationBar bottomNavigationBar(BuildContext context, int selectedIndex,
-    onItemTapped) {
+BottomNavigationBar bottomNavigationBar(
+    {required BuildContext context, required int selectedIndex, onItemTapped}) {
   return BottomNavigationBar(
       enableFeedback: false,
       type: BottomNavigationBarType.fixed,
@@ -151,21 +156,3 @@ final List<String> _bottomNavItems = [
   'Tâches',
   'Mon compte',
 ];
-
-String tooltip(int index) {
-  switch (index) {
-    case 0:
-      return _bottomNavItems[0];
-    case 1:
-      return _bottomNavItems[1];
-    case 2:
-      return _bottomNavItems[2];
-    case 3:
-      return _bottomNavItems[3];
-    case 4:
-      return _bottomNavItems[4];
-    default:
-      return _bottomNavItems[5];
-  }
-}
-

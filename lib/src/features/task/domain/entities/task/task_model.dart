@@ -16,10 +16,13 @@ class TaskModel extends Equatable{
   final UserModel? user;
   final bool? notify;
   final bool? done;
+  final bool? favorite;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
-  const TaskModel.nullConst({this.id, this.title, this.desc, this.dateTime,this.user, this.priority, this.notify, this.done});
-  const TaskModel({this.id, required this.title, required this.desc, required this.dateTime,required this.user, required this.priority,required this.notify,required this.done});
-  const TaskModel.addTask({this.id, required this.title, required this.desc, required this.dateTime,this.user, required this.priority,required this.notify,required this.done});
+  const TaskModel.nullConst({this.id, this.title, this.desc, this.dateTime,this.user, this.priority, this.notify, this.done,this.favorite,this.createdAt,this.updatedAt});
+  const TaskModel({this.id, required this.title, required this.desc, required this.dateTime,required this.user, required this.priority,required this.notify,required this.done,this.favorite,this.createdAt,this.updatedAt});
+  const TaskModel.addTask({this.id, required this.title, required this.desc, required this.dateTime,this.user, required this.priority,required this.notify,required this.done,this.favorite,this.createdAt,this.updatedAt});
 
 
   const TaskModel.getTasks(
@@ -31,7 +34,9 @@ class TaskModel extends Equatable{
       this.dateTime,
       this.priority,
       this.done,
-      this.notify
+      this.notify,
+      this.favorite,
+      this.createdAt,this.updatedAt
       });
 
   const TaskModel.updateTask(
@@ -43,7 +48,7 @@ class TaskModel extends Equatable{
         this.dateTime,
         this.priority,
         this.done,
-        this.notify
+        this.notify,this.favorite,this.createdAt,this.updatedAt
       });
 
   const TaskModel.getTitle(
@@ -55,7 +60,7 @@ class TaskModel extends Equatable{
         this.dateTime,
         this.priority,
         this.done,
-        this.notify
+        this.notify,this.favorite,this.createdAt,this.updatedAt
       });
 
   const TaskModel.geTaskById({
@@ -66,8 +71,7 @@ class TaskModel extends Equatable{
     this.dateTime,
     this.priority,
     this.done,
-    this.notify
-
+    this.notify,this.favorite,this.createdAt,this.updatedAt
   });
 
   factory TaskModel.fromJson(Map<String,dynamic> json) => _$TaskModelFromJson(json);
@@ -110,7 +114,8 @@ class TaskModel extends Equatable{
     TaskPriority? priority,
     UserModel? user,
     bool? done,
-    bool? notify
+    bool? notify,
+    bool? favorite
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -120,7 +125,9 @@ class TaskModel extends Equatable{
       priority: priority ?? this.priority,
       user: user ?? this.user,
       notify: notify ?? this.notify,
-      done: done ?? this.done
+      done: done ?? this.done,
+      favorite: favorite ??this.favorite,
+      updatedAt: updatedAt ?? updatedAt
     );
   }
 

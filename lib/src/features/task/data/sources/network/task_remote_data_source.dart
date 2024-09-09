@@ -25,7 +25,9 @@ class TaskRemoteDataSource {
       'user': task.user!.toJson(),
       'done': task.done,
       'notify':task.notify,
-      'createdAt': FieldValue.serverTimestamp()
+      'createdAt': DateTime.timestamp().toIso8601String(),
+      'updatedAt': DateTime.timestamp().toIso8601String(),
+      'favorite': false
     });
 
     // Récupérer l'ID généré et mettre à jour le document avec cet ID dans le champ 'id'
@@ -46,7 +48,7 @@ class TaskRemoteDataSource {
           'user': task.user!.toJson(),
           'done': task.done,
           'notify':task.notify,
-          'createdAt': FieldValue.serverTimestamp()
+          'updatedAt': DateTime.timestamp().toIso8601String()
         });
   }
 
@@ -64,7 +66,7 @@ class TaskRemoteDataSource {
         .collection(collectionPath) // Collection principale
         .doc(task.user!.uid) // Document pour l'utilisateur spécifique
         .collection(secondCollectionPath) // Sous-collection pour les tâches de l'utilisateur
-        .orderBy('createdAt', descending: true) // Trier par la date de création en ordre décroissant
+        .orderBy('updatedAt', descending: true) // Trier par la date de modification en ordre décroissant
         .get(); // Récupérer tous les documents de la sous-collection
 
    //Conversion

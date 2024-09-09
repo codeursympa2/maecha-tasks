@@ -40,4 +40,5 @@ class UserModel extends Equatable{
   @override
   List<Object?> get props => [uid,firstName,lastName,email,password];
 
+  String get fullName => "$firstName ${ lastName!.length > 11 ? "${lastName!.substring(0,11)}..." :lastName  }".toUpperCase();
 }
