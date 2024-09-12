@@ -15,11 +15,13 @@ import 'package:injectable/injectable.dart' as _i2;
 import 'package:shared_preferences/shared_preferences.dart' as _i3;
 
 import '../../src/features/authentification/application/usecases/login_user.dart'
+    as _i33;
+import '../../src/features/authentification/application/usecases/logout_user.dart'
     as _i32;
 import '../../src/features/authentification/application/usecases/register_user.dart'
-    as _i33;
-import '../../src/features/authentification/application/usecases/send_verification_email.dart'
     as _i34;
+import '../../src/features/authentification/application/usecases/send_verification_email.dart'
+    as _i35;
 import '../../src/features/authentification/data/repositories/auth_repositories_impl.dart'
     as _i26;
 import '../../src/features/authentification/data/sources/network/firebase_auth_datasource.dart'
@@ -63,13 +65,13 @@ import '../../src/features/task/data/sources/network/task_remote_data_source.dar
 import '../../src/features/task/domain/repositories/task_repository.dart'
     as _i16;
 import '../../src/features/task/presentation/bloc/task_bloc/task_bloc.dart'
-    as _i35;
+    as _i36;
 import '../bloc/connectivity_checker_bloc.dart' as _i8;
 import '../services/bottom_sheet_service.dart' as _i6;
 import '../services/easy_loading/easy_loading_service.dart' as _i5;
 import '../services/firebase_service.dart' as _i4;
 import '../services/shared_preferences_service.dart' as _i13;
-import 'injectable.dart' as _i36;
+import 'injectable.dart' as _i37;
 
 extension GetItInjectableX on _i1.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -145,13 +147,15 @@ extension GetItInjectableX on _i1.GetIt {
         () => _i30.GetTasks(repository: gh<_i16.TaskRepository>()));
     gh.lazySingleton<_i31.UpdateTasks>(
         () => _i31.UpdateTasks(repository: gh<_i16.TaskRepository>()));
-    gh.lazySingleton<_i32.LoginUser>(
-        () => _i32.LoginUser(gh<_i25.AuthRepository>()));
-    gh.lazySingleton<_i33.RegisterUser>(
-        () => _i33.RegisterUser(gh<_i25.AuthRepository>()));
-    gh.lazySingleton<_i34.SendVerificationEmail>(
-        () => _i34.SendVerificationEmail(gh<_i25.AuthRepository>()));
-    gh.lazySingleton<_i35.TaskBloc>(() => _i35.TaskBloc(
+    gh.lazySingleton<_i32.LogoutUser>(
+        () => _i32.LogoutUser(rep: gh<_i25.AuthRepository>()));
+    gh.lazySingleton<_i33.LoginUser>(
+        () => _i33.LoginUser(gh<_i25.AuthRepository>()));
+    gh.lazySingleton<_i34.RegisterUser>(
+        () => _i34.RegisterUser(gh<_i25.AuthRepository>()));
+    gh.lazySingleton<_i35.SendVerificationEmail>(
+        () => _i35.SendVerificationEmail(gh<_i25.AuthRepository>()));
+    gh.lazySingleton<_i36.TaskBloc>(() => _i36.TaskBloc(
           addTask: gh<_i27.AddTask>(),
           addTaskLocal: gh<_i20.AddTaskLocal>(),
           deleteTask: gh<_i29.DeleteTask>(),
@@ -170,4 +174,4 @@ extension GetItInjectableX on _i1.GetIt {
   }
 }
 
-class _$AppModule extends _i36.AppModule {}
+class _$AppModule extends _i37.AppModule {}

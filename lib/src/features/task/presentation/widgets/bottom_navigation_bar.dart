@@ -5,9 +5,12 @@ import 'package:heroicons/heroicons.dart';
 import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
+import 'package:maecha_tasks/src/constants/strings/paths.dart';
+import 'package:maecha_tasks/src/features/authentification/presentation/bloc/auth/auth_bloc.dart';
 import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
 import 'package:maecha_tasks/src/features/task/presentation/widgets/sync_status_message.dart';
 import 'package:maecha_tasks/src/utils/check_connectivity_listener_widget.dart';
+import 'package:maecha_tasks/src/utils/easy_loading_messages.dart';
 
 class BottomNavigationPage extends StatefulWidget {
   final StatefulNavigationShell child;
@@ -23,7 +26,9 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
   bool isConnected = false;
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ConnectivityCheckerBloc, ConnectivityCheckerState>(
+    return MultiBlocListener(
+    listeners: [
+    BlocListener<ConnectivityCheckerBloc, ConnectivityCheckerState>(
       listener: (context, state) async {
         if (state is ConnectionInternetState) {
           setState(() {
@@ -41,50 +46,64 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
           });
         }
       },
+),
+    BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if(state is AuthUnauthenticatedState){
+          context.go(mainPath);
+        }
+
+        if(state is UserLogoutState){
+          showCustomSuccess(message: state.message);
+          context.go(mainPath);
+        }
+      },
+    ),
+  ],
       child: Scaffold(
-        body: SafeArea(
-          child: Stack(
-            children: [
-              Center(
-                child: checkConnectivityListenerWidget(child: widget.child),
-              ),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: BlocConsumer<TaskBloc, TaskState>(
-                  listener: (context, state) {
-                    if(state is DoublonState){
-                      scaffoldMessenger(context, state.message, Icons.info, infoColorLight);
-                    }
+            body: SafeArea(
+              child: Stack(
+                children: [
+                  Center(
+                    child: checkConnectivityListenerWidget(child: widget.child),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: BlocConsumer<TaskBloc, TaskState>(
+                      listener: (context, state) {
+                        if(state is DoublonState){
+                          scaffoldMessenger(context, state.message, Icons.info, infoColorLight);
+                        }
 
-                    if( state is SyncDataFailure){
-                      scaffoldMessenger(context, "Echec de la syncronisation", Icons.info, dangerLight);
-                    }
-                  },
-                  builder: (context, state) {
-                    return SyncStatusMessage(isSyncing: state is SyncData &&
-                        isConnected);
-                  },
-                ),
+                        if( state is SyncDataFailure){
+                          scaffoldMessenger(context, "Echec de la syncronisation", Icons.info, dangerLight);
+                        }
+                      },
+                      builder: (context, state) {
+                        return SyncStatusMessage(isSyncing: state is SyncData &&
+                            isConnected);
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
+            bottomNavigationBar: bottomNavigationBar(
+                context:context,
+                selectedIndex: widget.child.currentIndex,
+                onItemTapped: (index) {
+                  index == 0 ? BlocProvider.of<TaskBloc>(context).add(const LoadTasksDashboard()):null;
+                  index == 3 ? BlocProvider.of<TaskBloc>(context).add(const GetTasksEvent()):null;
+
+                  widget.child.goBranch(
+                    index,
+                    initialLocation: index == widget.child.currentIndex,
+                  );
+                  setState(() {});
+            }),
           ),
-        ),
-        bottomNavigationBar: bottomNavigationBar(
-            context:context,
-            selectedIndex: widget.child.currentIndex,
-            onItemTapped: (index) {
-              index == 0 ? BlocProvider.of<TaskBloc>(context).add(const LoadTasksDashboard()):null;
-              index == 3 ? BlocProvider.of<TaskBloc>(context).add(const GetTasksEvent()):null;
-
-              widget.child.goBranch(
-                index,
-                initialLocation: index == widget.child.currentIndex,
-              );
-              setState(() {});
-        }),
-      ),
     );
   }
 }
@@ -123,7 +142,7 @@ BottomNavigationBar bottomNavigationBar(
         ),
         _buildBottomNavigationBarItem(
             icon: HeroIcons.user,
-            label: 'Mon compte',
+            label: 'Profil',
             selectedIndex: selectedIndex
         ),
       ]
@@ -154,5 +173,5 @@ final List<String> _bottomNavItems = [
   'Agenda',
   'Ajouter',
   'Tâches',
-  'Mon compte',
+  'Profil',
 ];

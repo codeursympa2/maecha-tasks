@@ -9,11 +9,13 @@ class UserModel extends Equatable{
   final String? firstName;
   final String? lastName;
   final String? email;
+  final int? tel;
   final String? password;
 
   const UserModel({
     this.uid,
     this.firstName,
+    this.tel,
     this.lastName,
     required this.email,
     this.password
@@ -24,12 +26,13 @@ class UserModel extends Equatable{
     this.firstName,
     this.lastName,
     this.email,
-    this.password
+    this.password,
+    this.tel
   });
 
 
 
-  const UserModel.userToCloudFirestore(this.uid, this.firstName, this.lastName,this.email,{this.password = ""});
+  const UserModel.userToCloudFirestore(this.uid, this.firstName, this.lastName,this.email,this.tel,{this.password = ""});
 
   // Méthode générée pour la désérialisation
   factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
@@ -38,7 +41,7 @@ class UserModel extends Equatable{
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 
   @override
-  List<Object?> get props => [uid,firstName,lastName,email,password];
+  List<Object?> get props => [uid,firstName,lastName,email,password,tel];
 
   String get fullName => "$firstName ${ lastName!.length > 11 ? "${lastName!.substring(0,11)}..." :lastName  }".toUpperCase();
 }

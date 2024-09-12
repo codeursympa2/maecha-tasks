@@ -22,7 +22,7 @@ class FirebaseAuthDatasource{
 
     //On le sauvegarde dans firestore
     await db.saverUser(
-        UserModel.userToCloudFirestore(userCredential.user!.uid,user.firstName,user.lastName,userCredential.user!.email!)
+        UserModel.userToCloudFirestore(userCredential.user!.uid,user.firstName,user.lastName,userCredential.user!.email!,user.tel)
     );
 
     //Envoie de l'email
@@ -42,5 +42,8 @@ class FirebaseAuthDatasource{
     }
   }
 
+  Future<void> logout()async{
+      await firebaseAuth.signOut();
+  }
 
 }

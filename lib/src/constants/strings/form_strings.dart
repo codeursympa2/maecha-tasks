@@ -24,6 +24,7 @@ const String waiting="Veillez patienter...";
 const String  createTask="Création d’une tâche";
 const String  updateTask="Mise à jour  d’une tâche";
 const String descCreateTask="Bienvenue sur la page de création de tâche ! Ajoutez facilement et rapidement vos nouvelles tâches, définissez leurs priorités, et restez organisé pour atteindre vos objectifs avec efficacité.";
+const String descUpdateTask = "Bienvenue sur la page de mise à jour de tâche ! Modifiez facilement vos tâches existantes, ajustez leurs priorités, et assurez-vous de rester sur la bonne voie pour atteindre vos objectifs avec efficacité.";
 const String failureAddTask="Echec de l'ajout de la tâche";
 const String failureUpdateTask="Echec de la modification de la tâche";
 const String failureDeleteTask="Echec de la suppression de la tâche";

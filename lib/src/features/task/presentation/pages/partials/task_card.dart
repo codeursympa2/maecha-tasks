@@ -5,6 +5,7 @@ import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.d
 import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
 import 'package:maecha_tasks/src/features/task/domain/value_objects/task_priority.dart';
+import 'package:maecha_tasks/src/features/task/presentation/utils/utils.dart';
 
 class TaskCard extends StatelessWidget {
   final TaskModel task;
@@ -34,7 +35,7 @@ class TaskCard extends StatelessWidget {
               children: [
                 const HeroIcon(HeroIcons.flag,size: 20,style: HeroIconStyle.outline,color: backgroundLight,),
                 const Gap(2),
-                Text(_translatePriorityValue(task.priority!.name),
+                Text(translatePriorityValue(task.priority!.name),
                   style: const TextStyle(color: backgroundLight),
                 ),
                 const Spacer(),
@@ -84,15 +85,7 @@ class TaskCard extends StatelessWidget {
     }
   }
 
-  String _translatePriorityValue(String priority){
-    if(priority == TaskPriority.low.name){
-      return "Basse";
-    }else if(priority ==TaskPriority.medium.name){
-      return "Moyenne";
-    }else{
-      return "Elevée";
-    }
-  }
+
 
   String _getDateDecompose(DateTime date,String option){
     if(option=="date"){

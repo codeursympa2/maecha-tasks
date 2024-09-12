@@ -7,6 +7,7 @@ import 'package:maecha_tasks/routes/app_router.dart';
 import 'package:maecha_tasks/src/constants/strings/strings.dart';
 import 'package:maecha_tasks/src/constants/theme/light/theme_light.dart';
 import 'package:maecha_tasks/src/features/authentification/application/usecases/login_user.dart';
+import 'package:maecha_tasks/src/features/authentification/application/usecases/logout_user.dart';
 import 'package:maecha_tasks/src/features/authentification/application/usecases/register_user.dart';
 import 'package:maecha_tasks/src/features/authentification/application/usecases/send_verification_email.dart';
 import 'package:maecha_tasks/src/features/authentification/data/sources/network/firestore_auth_datasource.dart';
@@ -51,7 +52,8 @@ class MyApp extends StatelessWidget {
           registerUser: getIt<RegisterUser>(),
           sendVerificationEmail: getIt<SendVerificationEmail>(),
           sharedPreferencesService: getIt<SharedPreferencesService>(),
-          firestoreAuthDatasource: getIt<FirestoreAuthDatasource>()
+          firestoreAuthDatasource: getIt<FirestoreAuthDatasource>(),
+          logoutUser: getIt<LogoutUser>()
         )),
         //Bottom sheet nav
         BlocProvider<BottomSheetBloc>(create: (context)=> BottomSheetBloc()),

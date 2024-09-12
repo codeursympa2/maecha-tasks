@@ -115,7 +115,9 @@ class TaskModel extends Equatable{
     UserModel? user,
     bool? done,
     bool? notify,
-    bool? favorite
+    bool? favorite,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -127,7 +129,8 @@ class TaskModel extends Equatable{
       notify: notify ?? this.notify,
       done: done ?? this.done,
       favorite: favorite ??this.favorite,
-      updatedAt: updatedAt ?? updatedAt
+      updatedAt: updatedAt ?? this.updatedAt,
+      createdAt: createdAt ?? this.createdAt
     );
   }
 

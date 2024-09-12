@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
 
 void bottomSheetOptions(
@@ -12,19 +13,35 @@ void bottomSheetOptions(
       builder: (BuildContext context) {
     return SizedBox(
       height: 190,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ElevatedButton(onPressed: onEditAction , child: const Text('Editer')),
-              const Gap(10),
-              OutlinedButton(onPressed: (){
-              }, child: const Text('Ajouter aux favoris')),
-            ],
-          ),
+      child: Center(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Container(
+                width: 40,
+                height: 5,
+                decoration: const BoxDecoration(
+                    color: secondaryTextLight,
+                    borderRadius: BorderRadius.all(Radius.circular(20))
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Gap(20),
+                  ElevatedButton(onPressed: onEditAction , child: const Text('Editer')),
+                  const Gap(10),
+                  OutlinedButton(onPressed: (){
+                  }, child: const Text('Terminer')),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

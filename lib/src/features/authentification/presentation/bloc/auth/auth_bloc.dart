@@ -5,11 +5,11 @@ import 'package:maecha_tasks/global/injectable/injectable.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/strings/query_responses_strings.dart';
 import 'package:maecha_tasks/src/features/authentification/application/usecases/login_user.dart';
+import 'package:maecha_tasks/src/features/authentification/application/usecases/logout_user.dart';
 import 'package:maecha_tasks/src/features/authentification/application/usecases/register_user.dart';
 import 'package:maecha_tasks/src/features/authentification/application/usecases/send_verification_email.dart';
 import 'package:maecha_tasks/src/features/authentification/data/sources/network/firestore_auth_datasource.dart';
 import 'package:maecha_tasks/src/features/authentification/domain/entities/user_model/user_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -21,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SendVerificationEmail sendVerificationEmail;
   final SharedPreferencesService sharedPreferencesService;
   final FirestoreAuthDatasource firestoreAuthDatasource;
+  final LogoutUser logoutUser;
 
 
   AuthBloc({
@@ -28,7 +29,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.registerUser,
     required this.sendVerificationEmail,
     required this.sharedPreferencesService,
-    required this.firestoreAuthDatasource
+    required this.firestoreAuthDatasource,
+    required this.logoutUser
   }) : super(const AuthInitialState()) {
     on<LoginUserEvent>((event, emit) async{
       emit(const AuthLoadingState());
@@ -97,6 +99,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await Future.delayed(const Duration(seconds:seconds),() => emit(const AuthAuthenticatedState()),);
       }else{
         await Future.delayed(const Duration(seconds:seconds),() => emit(const AuthUnauthenticatedState()),);
+      }
+    });
+
+    on<LogoutUserEvent>((event,emit)async{
+      try{
+        sharedPreferencesService.clearData(sharedPreferencesService.userKey);
+        await logoutUser.call().whenComplete(() => emit(const UserLogoutState(message: "Vous êtes déconnecté.")));
+      }catch(e){
+        emit(const AuthFailureState(message: failedLogoutUser));
       }
     });
   }

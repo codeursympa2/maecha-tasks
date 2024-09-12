@@ -5,4 +5,6 @@ abstract class AuthRepository{
   Future<User?> login(UserModel user);
   Future<UserModel?> register(UserModel user);
   Future<void> sendVerificationEmail();
+  Future<void> logout();
+
 }

@@ -40,7 +40,7 @@ class ListTasks extends StatefulWidget  {
   State<ListTasks> createState() => _ListTasksState();
 }
 
-class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMixin {
+class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMixin,WidgetsBindingObserver {
   //
   List<TaskModel> listTasks=[];
   List<TaskModel> defaultListTasks=[];
@@ -71,10 +71,18 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    //Chargement
-    _loadTasks();
+    // Ajout de l'observateur du cycle de vie
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Vérifier l'état du cycle de vie
+    if (state == AppLifecycleState.resumed) {
+      // Recharger les données lorsque l'application revient en avant-plan
+      _loadTasks();
+    }
   }
 
   @override
@@ -294,11 +302,14 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
   }
 
   Widget _shimmerFilterOptions(){
-    const shimmerObj=ShimmerCard(width: 120, height: 28, radius: roundedFilterOptions,marginHorz: 8);
+    const shimmerObj=ShimmerCard(width: 120, height: 28, radius: roundedFilterOptions);
     return const Row(children: [
       shimmerObj,
+      Gap(8),
       shimmerObj,
+      Gap(8),
       shimmerObj,
+      Gap(8),
       shimmerObj,
     ],);
   }
@@ -344,7 +355,7 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
     return TaskCard(
       task: task,
       onTapOptions: (){
-        //En cliquant sur les 3 points
+
       },);
   }
 }

@@ -32,4 +32,7 @@ class RegisterUserEvent extends AuthEvent{
 final class CheckConnectUserEvent extends AuthEvent{
   const CheckConnectUserEvent();
 }
+final class LogoutUserEvent extends AuthEvent{
+  const LogoutUserEvent();
+}
 

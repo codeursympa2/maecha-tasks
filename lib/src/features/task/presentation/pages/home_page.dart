@@ -230,15 +230,15 @@ class _HomePageContentState extends State<_HomePageContent>  {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const  ShimmerCard(width: 300, height: 20, radius: 0),
+          const  ShimmerCard(width: 300, height: 20, radius: 10),
           const Gap(2),
-          const  ShimmerCard(width: 200, height: 20, radius: 0),
+          const  ShimmerCard(width: 200, height: 20, radius: 10),
           const Gap(18),
           _rowCardDashShimmer(),
           const Gap(18),
           _rowCardDashShimmer(),
           const Gap(19),
-          const  ShimmerCard(width: 130, height: 23, radius: 0),
+          const  ShimmerCard(width: 130, height: 23, radius: 10),
           const Gap(10),
           shimmerTaskCard(itemCount: 4)
         ],

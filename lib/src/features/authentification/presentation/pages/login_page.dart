@@ -41,7 +41,6 @@ class LoginPage extends StatelessWidget {
         //Affichage du message
         showCustomSuccess(message: state.message);
         //Redirection
-        //context.go('/index',extra: {'index':0,});
         context.go(homePath);
         //Fermeture de dialog
         EasyLoading.dismiss();

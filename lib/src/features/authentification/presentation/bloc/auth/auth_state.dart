@@ -46,3 +46,8 @@ final class AuthAuthenticatedState extends AuthState{
 final class AuthUnauthenticatedState extends AuthState{
   const AuthUnauthenticatedState();
 }
+
+class UserLogoutState extends AuthState{
+  final String message;
+  const UserLogoutState({required this.message});
+}

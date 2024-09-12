@@ -30,4 +30,9 @@ class AuthRepositoriesImpl implements AuthRepository {
     return await dataSource.sendVerificationEmail();
   }
 
+  @override
+  Future<void> logout() async{
+    await dataSource.logout();
+  }
+
 }

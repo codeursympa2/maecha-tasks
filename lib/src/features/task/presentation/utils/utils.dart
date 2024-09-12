@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:gap/gap.dart';
+import 'package:heroicons/heroicons.dart';
+import 'package:intl/intl.dart';
+import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/constants/numbers.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
 import 'package:maecha_tasks/src/features/task/domain/value_objects/dash_task_filter_options.dart';
@@ -169,6 +173,37 @@ Widget shimmerTaskCard({required int itemCount}){
       itemBuilder: (context,index){
         return const ShimmerCard(marginVertical: marginVerticalCard,width: double.infinity,height: 100,radius: radiusTaskCard);
       });
+}
+
+String formatDateTimeFr(DateTime dateTime) {
+  // Spécifier la locale en français
+  final DateFormat formatter = DateFormat('d MMMM y à HH \'h\' mm', 'fr_FR');
+  return formatter.format(dateTime);
+}
+
+String translatePriorityValue(String priority){
+  if(priority == TaskPriority.low.name){
+    return "Basse";
+  }else if(priority ==TaskPriority.medium.name){
+    return "Moyenne";
+  }else{
+    return "Elevée";
+  }
+}
+
+Widget widgetTemporaire(){
+  return const Center(
+    child:  Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        HeroIcon(HeroIcons.wrench,size: 40,color: primaryLight,),
+        Gap(2),
+        Text("Fonctionalité en cours developpement")
+
+      ],
+    ),
+  );
 }
 
 
