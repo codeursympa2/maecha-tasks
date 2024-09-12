@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
     super.initState();
     // Ajout de l'observateur du cycle de vie
     WidgetsBinding.instance.addObserver(this);
+    _loadList();
   }
 
   @override

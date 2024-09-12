@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:heroicons/heroicons.dart';
 import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
@@ -58,6 +59,9 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
   int tag = -1;
 
   List<String> filterOptions = [
+    'Basse',
+    'Moyenne',
+    'Elevée',
     'Aujourd\'hui',
     'Hier',
     'Demain',
@@ -274,7 +278,27 @@ class _ListTasksState extends State<ListTasks> with SingleTickerProviderStateMix
                         ],
                       );
                     },
-                  ):const Center(child: Text("Pas de tâches pour ce filtre."),),
+                  ):const Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        HeroIcon(
+                          HeroIcons.inbox, // Icône représentant une boîte vide par exemple
+                          size: 48.0, // Taille de l'icône
+                          color: secondaryTextLight, // Couleur de l'icône
+                        ),
+                        SizedBox(height: 16.0), // Espace entre l'icône et le texte
+                        Text(
+                          "Pas de tâches pour ce filtre.",
+                          style: TextStyle(
+                            fontSize: 16.0, // Taille du texte
+                            color: secondaryTextLight, // Couleur du texte
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+
                 ),
               ],
             ),

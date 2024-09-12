@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 import 'package:maecha_tasks/global/bloc/connectivity_checker_bloc.dart';
 import 'package:maecha_tasks/global/services/shared_preferences_service.dart';
 import 'package:maecha_tasks/src/constants/strings/form_strings.dart';
+import 'package:maecha_tasks/src/constants/strings/strings.dart';
 import 'package:maecha_tasks/src/features/authentification/domain/entities/user_model/user_model.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/local/add_task_local.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/local/check_task_title_local.dart';
@@ -20,6 +21,7 @@ import 'package:maecha_tasks/src/features/task/application/usecases/remote/get_t
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/get_tasks.dart';
 import 'package:maecha_tasks/src/features/task/application/usecases/remote/update_tasks.dart';
 import 'package:maecha_tasks/src/features/task/domain/entities/task/task_model.dart';
+import 'package:maecha_tasks/src/features/task/domain/value_objects/task_priority.dart';
 import 'package:maecha_tasks/src/features/task/presentation/utils/utils.dart';
 
 part 'task_event.dart';
@@ -178,25 +180,30 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
         final filteredTasks = event.list.where((task) {
           if (task.dateTime == null) return false;
-
           switch (event.tag) {
-            case 0: // Aujourd'hui
+            case 0:
+              return task.priority == TaskPriority.low;
+            case 1:
+              return task.priority == TaskPriority.medium;
+            case 2:
+              return task.priority == TaskPriority.high;
+            case 3: // Aujourd'hui
               return isSameDay(task.dateTime!, now);
-            case 1: // Hier
+            case 4: // Hier
               final yesterday = now.subtract(const Duration(days: 1));
               return isSameDay(task.dateTime!, yesterday);
-            case 2: // Demain
+            case 5: // Demain
               final tomorrow = now.add(const Duration(days: 1));
               return isSameDay(task.dateTime!, tomorrow);
-            case 3: // Semaine prochaine
+            case 6: // Semaine prochaine
               final nextWeekStart = now.add(Duration(days: (7 - now.weekday + 1)));
               final nextWeekEnd = nextWeekStart.add(const Duration(days: 6));
               return task.dateTime!.isAfter(nextWeekStart) &&
                   task.dateTime!.isBefore(nextWeekEnd);
-            case 4: // Mois passé
+            case 7: // Mois passé
               final lastMonth = DateTime(now.year, now.month - 1);
               return isSameMonth(task.dateTime!, lastMonth);
-            case 5: // Mois prochain
+            case 8: // Mois prochain
               final nextMonth = DateTime(now.year, now.month + 1);
               return isSameMonth(task.dateTime!, nextMonth);
             default: // Aujourd'hui

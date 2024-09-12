@@ -193,17 +193,26 @@ String translatePriorityValue(String priority){
 
 Widget widgetTemporaire(){
   return const Center(
-    child:  Column(
+    child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        HeroIcon(HeroIcons.wrench,size: 40,color: primaryLight,),
-        Gap(2),
-        Text("Fonctionalité en cours developpement")
-
+        HeroIcon(
+          HeroIcons.wrench, // Icône de clé à molette pour représenter le développement en cours
+          size: 48.0, // Taille de l'icône
+          color: secondaryTextLight, // Couleur de l'icône
+        ),
+        const SizedBox(height: 16.0), // Espace entre l'icône et le texte
+        const Text(
+          "Fonctionnalité en cours de développement",
+          style: TextStyle(
+            fontSize: 16.0, // Taille du texte
+            color: secondaryTextLight, // Couleur du texte
+          ),
+        ),
       ],
     ),
   );
+
 }
 
 
