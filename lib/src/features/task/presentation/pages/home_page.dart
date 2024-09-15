@@ -40,10 +40,10 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   @override
   void initState() {
     super.initState();
-    // Ajout de l'observateur du cycle de vie
+    _loadList(); // Charger les tâches au démarrage
     WidgetsBinding.instance.addObserver(this);
-    _loadList();
   }
+
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -102,6 +102,7 @@ class _HomePageState extends State<HomePage>  with WidgetsBindingObserver{
   }
 
   void _loadList() {
+    print('Chargement des tâches...');
     BlocProvider.of<TaskBloc>(context).add(const LoadTasksDashboard());
   }
 

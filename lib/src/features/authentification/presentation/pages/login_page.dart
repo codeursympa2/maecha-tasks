@@ -17,6 +17,7 @@ import 'package:maecha_tasks/src/features/authentification/presentation/bloc/aut
 import 'package:maecha_tasks/src/features/authentification/presentation/bloc/bottom_sheet/bottom_sheet_bloc.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/bloc/form/auth_form_bloc.dart';
 import 'package:maecha_tasks/src/features/authentification/presentation/widgets/common_widgets_auth.dart';
+import 'package:maecha_tasks/src/features/task/presentation/bloc/task_bloc/task_bloc.dart';
 import 'package:maecha_tasks/src/utils/easy_loading_messages.dart';
 import 'package:maecha_tasks/src/utils/utils.dart';
 import 'package:tn_bottom_sheet_navigator/tn_bottom_sheet_navigator.dart';
@@ -40,10 +41,13 @@ class LoginPage extends StatelessWidget {
       if(state is AuthLoginSuccessState){
         //Affichage du message
         showCustomSuccess(message: state.message);
+        BlocProvider.of<TaskBloc>(context).add(const LoadTasksDashboard());
         //Redirection
         context.go(homePath);
         //Fermeture de dialog
         EasyLoading.dismiss();
+        //
+
       }
       if(state is AuthFailureState){
         showCustomError(message: state.message);

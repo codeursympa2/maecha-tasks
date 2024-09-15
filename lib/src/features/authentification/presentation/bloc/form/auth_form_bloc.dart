@@ -19,6 +19,7 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
 
       late String stateLastNameMessage;
       late String stateFirstNameMessage;
+      late String stateTelMessage;
       late String stateEmailMessage;
       late String statePasswordMessage;
       late String statePasswordConfMessage;
@@ -94,6 +95,18 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
           stateLastNameMessage="";
         }
 
+        if(field.telField == ""){
+          formInvalid=true;
+          stateTelMessage=telErrorMessage;
+        }else{
+          if(field.telField!.length != 9){
+            formInvalid=true;
+            stateTelMessage=telErrorMessage;
+          }else{
+            stateTelMessage="";
+          }
+        }
+
         if(field.passwordConfField == ""){
           formInvalid=true;
           statePasswordConfMessage=passwordConfErrorMessage;
@@ -108,8 +121,6 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
         }
       }
 
-
-
       if(formInvalid){
         if(event.typeFormEnum == TypeFormEnum.register ){
           emit(AuthFormInvalidState(
@@ -118,7 +129,8 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
                   lastNameField: stateLastNameMessage,
                   emailField: stateEmailMessage,
                   passwordField: statePasswordMessage,
-                  passwordConfField: statePasswordConfMessage
+                  passwordConfField: statePasswordConfMessage,
+                  telField: stateTelMessage
               )
           ));
         }else{

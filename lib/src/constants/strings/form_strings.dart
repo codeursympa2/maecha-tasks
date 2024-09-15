@@ -8,6 +8,8 @@ const String passwordConf="Mot de passe de confirmation";
 //Fields Label errors
 const String firstNameErrorMessage="Veillez saisir le prénom.";
 const String lastNameErrorMessage="Veillez saisir le nom.";
+const String telErrorMessage="Veillez saisir un numéro de téléphone.";
+const String telErrorLengthMessage="Taille du numéro de téléphone incorrecte.";
 const String emailErrorMessage="Veillez saisir l'adresse email.";
 const String passwordErrorMessage="Veillez saisir le mot de passe.";
 const String passwordConfErrorMessage="Veillez confirmer le mot de passe.";

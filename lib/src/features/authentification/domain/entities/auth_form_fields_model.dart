@@ -1,6 +1,7 @@
 class AuthFormFieldsModel{
   String? firstNameField;
   String? lastNameField;
+  String? telField;
   String? emailField;
   String? passwordField;
   String? passwordConfField;
@@ -10,6 +11,7 @@ class AuthFormFieldsModel{
       {
       this.firstNameField,
       this.lastNameField,
+      this.telField,
       this.emailField,
       this.passwordField,
       this.passwordConfField});

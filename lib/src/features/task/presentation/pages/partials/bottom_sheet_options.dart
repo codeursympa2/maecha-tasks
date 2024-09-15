@@ -22,7 +22,7 @@ void bottomSheetOptions(
                 width: 40,
                 height: 5,
                 decoration: const BoxDecoration(
-                    color: secondaryTextLight,
+                    color: primaryLight,
                     borderRadius: BorderRadius.all(Radius.circular(20))
                 ),
               ),

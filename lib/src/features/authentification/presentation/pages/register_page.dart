@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:gap/gap.dart';
@@ -80,11 +81,13 @@ class _FormRegisterState extends State<_FormRegister> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _telController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordConfController = TextEditingController();
   final FocusNode _firstNameFocusNode = FocusNode();
   final FocusNode _lastNameFocusNode = FocusNode();
   final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _telFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   final FocusNode _passwordConfFocusNode = FocusNode();
 
@@ -95,6 +98,7 @@ class _FormRegisterState extends State<_FormRegister> {
   String firstNameValue="";
   String lastNameValue="";
   String emailValue="";
+  String telValue="";
   String passwordValue="";
   String passwordConfValue="";
 
@@ -121,6 +125,8 @@ class _FormRegisterState extends State<_FormRegister> {
                 _buildFirstNameField(state),
                 const Gap(10),
                 _buildLastNameField(state),
+                const Gap(10),
+                _buildTelField(state),
                 const Gap(10),
                 _buildEmailField(state),
                 const Gap(10),
@@ -239,6 +245,28 @@ class _FormRegisterState extends State<_FormRegister> {
     );
   }
 
+  Widget _buildTelField(AuthFormState state){
+    return TextFormField(
+      controller: _telController,
+      focusNode: _telFocusNode,
+      textInputAction: TextInputAction.next,
+      decoration: const InputDecoration(
+        labelText: 'Numéro de téléphone',
+        hintText: '+221', // Exemple de code de pays
+        border: OutlineInputBorder(),
+      ),
+      keyboardType: TextInputType.phone, // Type de clavier pour les numéros
+      validator: (value) => _validatedField(state, "tel"),
+      onChanged: (value){
+        setState(() {
+          telValue=value;
+        });
+        _onChangeField();
+      },
+    );
+
+  }
+
   Widget _buildPasswordField(AuthFormState state){
     return passwordFieldForm(
         label: password,
@@ -299,6 +327,9 @@ class _FormRegisterState extends State<_FormRegister> {
       if (field == 'lastName' && state.errors.lastNameField != "") {
         return state.errors.lastNameField;
       }
+      if (field == 'tel' && state.errors.telField != "") {
+        return state.errors.telField;
+      }
       if (field == 'email' && state.errors.emailField != "") {
         return state.errors.emailField;
       }
@@ -318,6 +349,7 @@ class _FormRegisterState extends State<_FormRegister> {
           firstNameField: firstNameValue,
           lastNameField: lastNameValue,
           emailField: emailValue,
+          telField: telValue,
           passwordField: passwordValue,
           passwordConfField: passwordConfValue
         ),
@@ -328,7 +360,8 @@ class _FormRegisterState extends State<_FormRegister> {
   void _logicToRegister(){
     if(_formKey.currentState != null && _formKey.currentState!.validate() && isChecked){
       //
-      UserModel user=UserModel(firstName: firstNameValue,lastName: lastNameValue,email: _emailController.text, password: _passwordController.text);
+      int codeDePaysInt = int.parse(telValue.replaceAll('+', ''));
+      UserModel user=UserModel(firstName: firstNameValue,lastName: lastNameValue,email: _emailController.text, password: _passwordController.text,tel: codeDePaysInt);
       BlocProvider.of<AuthBloc>(context).add(RegisterUserEvent(userModel: user));
     }
   }
@@ -336,6 +369,7 @@ class _FormRegisterState extends State<_FormRegister> {
   void _disposeTextEditingField(){
     _lastNameController.dispose();
     _firstNameController.dispose();
+    _telController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _passwordConfController.dispose();

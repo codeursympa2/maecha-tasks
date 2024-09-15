@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:gap/gap.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:intl/intl.dart';
 import 'package:maecha_tasks/src/constants/colors/light_mode/light_mode_colors.dart';
@@ -201,8 +200,8 @@ Widget widgetTemporaire(){
           size: 48.0, // Taille de l'icône
           color: secondaryTextLight, // Couleur de l'icône
         ),
-        const SizedBox(height: 16.0), // Espace entre l'icône et le texte
-        const Text(
+         SizedBox(height: 16.0), // Espace entre l'icône et le texte
+        Text(
           "Fonctionnalité en cours de développement",
           style: TextStyle(
             fontSize: 16.0, // Taille du texte

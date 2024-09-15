@@ -141,7 +141,7 @@ BottomNavigationBar bottomNavigationBar(
             selectedIndex: selectedIndex
         ),
         _buildBottomNavigationBarItem(
-            icon: HeroIcons.user,
+            icon: HeroIcons.userCircle,
             label: 'Profil',
             selectedIndex: selectedIndex
         ),
