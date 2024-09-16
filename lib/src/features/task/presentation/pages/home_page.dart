@@ -135,6 +135,7 @@ class _HomePageContentState extends State<_HomePageContent>  {
               child: BlocBuilder<TaskBloc, TaskState>(
                 builder: (context, state) {
                   if(state is HomeDashLoadingState){
+                    _loadList();
                     return _shimmerContent();
                   }
                   else if(state is HomeDashLoadedState){
@@ -195,6 +196,7 @@ class _HomePageContentState extends State<_HomePageContent>  {
                       );
 
                   }else{
+                    _loadList();
                     return _shimmerContent();
                   }
                 },
@@ -214,6 +216,7 @@ class _HomePageContentState extends State<_HomePageContent>  {
                 ],
               ) ,);
           }
+
           return  const Text("");
           },
     );
